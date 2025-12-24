@@ -1,16 +1,14 @@
-
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider  = "postgresql"
+  // นำบรรทัดเหล่านี้กลับมา
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-/* =======================
-   User
-======================= */
 enum Role {
   USER
   ADMIN
@@ -28,9 +26,6 @@ model User {
   predictions Prediction[]
 }
 
-/* =======================
-   Fixture (Match)
-======================= */
 model Fixture {
   id          Int          @id
   gw          Int
@@ -45,9 +40,6 @@ model Fixture {
   predictions Prediction[]
 }
 
-/* =======================
-   Prediction
-======================= */
 model Prediction {
   id         String   @id @default(uuid())
   userId     String
@@ -62,9 +54,6 @@ model Prediction {
   @@unique([userId, fixtureId])
 }
 
-/* =======================
-   Gameweek
-======================= */
 model Gameweek {
   id          Int      @id @default(autoincrement())
   gw          Int      @unique
