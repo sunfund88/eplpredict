@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
-  console.log('LINE_CLIENT_ID', process.env.LINE_CHANNEL_ID)
   const code = req.nextUrl.searchParams.get('code')
 
   // ถ้า LINE ไม่ส่ง code มา
@@ -23,6 +22,7 @@ export async function GET(req: NextRequest) {
       client_secret: process.env.LINE_CHANNEL_SECRET!
     })
   })
+  console.log('tokenRes', tokenRes)
 
   if (!tokenRes.ok) {
     return NextResponse.redirect(new URL('/', req.url))
@@ -39,6 +39,8 @@ export async function GET(req: NextRequest) {
   })
 
   const profile = await profileRes.json()
+  console.log('profile', profile)
+
   /**
    * profile = {
    *   userId,
