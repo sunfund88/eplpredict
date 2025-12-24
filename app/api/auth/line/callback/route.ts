@@ -1,67 +1,47 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function GET(req: NextRequest) {
-  const code = req.nextUrl.searchParams.get('code')
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const code = searchParams.get('code')
 
-  // ถ้า LINE ไม่ส่ง code มา
   if (!code) {
-    return NextResponse.redirect(new URL('/', req.url))
+    return NextResponse.json({ error: 'No code provided' }, { status: 400 })
   }
 
-  // ===== 1) แลก code เป็น access token =====
+  /* 1️⃣ ขอ access token */
   const tokenRes = await fetch('https://api.line.me/oauth2/v2.1/token', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: new URLSearchParams({
       grant_type: 'authorization_code',
       code,
-      redirect_uri: process.env.LINE_REDIRECT_URI!,
+      redirect_uri: process.env.LINE_CALLBACK_URL!,
       client_id: process.env.LINE_CHANNEL_ID!,
-      client_secret: process.env.LINE_CHANNEL_SECRET!
-    })
+      client_secret: process.env.LINE_CHANNEL_SECRET!,
+    }),
   })
-  console.log('tokenRes', tokenRes)
-
-  if (!tokenRes.ok) {
-    return NextResponse.redirect(new URL('/', req.url))
-  }
 
   const tokenData = await tokenRes.json()
-  const accessToken = tokenData.access_token
 
-  // ===== 2) ดึง profile ผู้ใช้จาก LINE =====
+  if (!tokenData.access_token) {
+    return NextResponse.json(tokenData, { status: 400 })
+  }
+
+  /* 2️⃣ ขอ profile */
   const profileRes = await fetch('https://api.line.me/v2/profile', {
     headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
+      Authorization: `Bearer ${tokenData.access_token}`,
+    },
   })
 
   const profile = await profileRes.json()
-  console.log('profile', profile)
 
-  /**
-   * profile = {
-   *   userId,
-   *   displayName,
-   *   pictureUrl,
-   *   statusMessage
-   * }
-   */
-
-  // ===== 3) set cookie (login สำเร็จ) =====
-  const res = NextResponse.redirect(new URL('/dashboard', req.url))
-
-  res.cookies.set('line_user', JSON.stringify({
+  /* 3️⃣ แสดงผล (ทดสอบ) */
+  return NextResponse.json({
     userId: profile.userId,
-    name: profile.displayName,
-    picture: profile.pictureUrl
-  }), {
-    httpOnly: true,
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7 // 7 วัน
+    displayName: profile.displayName,
+    pictureUrl: profile.pictureUrl,
   })
-
-  return res
 }
