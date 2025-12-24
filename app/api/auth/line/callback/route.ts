@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
+  console.log('LINE_CLIENT_ID', process.env.LINE_CLIENT_ID)
   const code = req.nextUrl.searchParams.get('code')
 
   // ถ้า LINE ไม่ส่ง code มา
