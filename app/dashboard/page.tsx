@@ -5,5 +5,6 @@ export default function Dashboard() {
   const token = cookies().get('line_token')
   if (!token) redirect('/')
 
+    
   return <h1>Dashboard</h1>
 }
