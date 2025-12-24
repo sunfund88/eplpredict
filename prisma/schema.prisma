@@ -1,0 +1,74 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+/* =======================
+   User
+======================= */
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(uuid())
+  lineId    String   @unique
+  name      String
+  image     String?
+  role      Role     @default(USER)
+  score     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  predictions Prediction[]
+}
+
+/* =======================
+   Fixture (Match)
+======================= */
+model Fixture {
+  id          Int          @id
+  gw          Int
+  kickoff     DateTime
+  home        String
+  away        String
+  homeScore   Int?
+  awayScore   Int?
+  finished    Boolean      @default(false)
+  multiplier  Int          @default(1)
+
+  predictions Prediction[]
+}
+
+/* =======================
+   Prediction
+======================= */
+model Prediction {
+  id         String   @id @default(uuid())
+  userId     String
+  fixtureId  Int
+  predHome   Int
+  predAway   Int
+  score      Int      @default(0)
+
+  user     User     @relation(fields: [userId], references: [id])
+  fixture  Fixture @relation(fields: [fixtureId], references: [id])
+
+  @@unique([userId, fixtureId])
+}
+
+/* =======================
+   Gameweek
+======================= */
+model Gameweek {
+  id          Int      @id @default(autoincrement())
+  gw          Int      @unique
+  gwDeadline  DateTime
+  calculated  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
