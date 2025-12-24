@@ -1,7 +1,7 @@
+// @ts-ignore
 import { PrismaClient } from '@prisma/client'
 
-// ใช้ชื่อตัวแปรที่แตกต่างเพื่อเลี่ยงความสับสน
-let prisma: PrismaClient
+let prisma: any
 
 if (process.env.NODE_ENV === 'production') {
   prisma = new PrismaClient()
