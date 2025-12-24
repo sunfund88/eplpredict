@@ -1,10 +1,16 @@
-import { getLineLoginUrl } from '@/lib/line'
-
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#06C755]">
-      <a href={getLineLoginUrl()}
-        className="bg-white text-[#06C755] px-8 py-4 rounded-xl font-bold text-lg shadow">
+    <main style={{display:'flex',height:'100vh',justifyContent:'center',alignItems:'center'}}>
+      <a
+        href="/api/auth/line"
+        style={{
+          background:'#06C755',
+          color:'#fff',
+          padding:'14px 24px',
+          borderRadius:8,
+          fontWeight:'bold'
+        }}
+      >
         Login with LINE
       </a>
     </main>
