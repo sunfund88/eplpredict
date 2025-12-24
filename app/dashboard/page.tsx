@@ -22,6 +22,18 @@ export default async function Dashboard() {
       />
       <h2>{user.displayName}</h2>
       <p>User ID: {user.userId}</p>
+      <form action="/dashboard/logout" method="POST">
+        <button
+          type="submit"
+          style={{
+            marginTop: 20,
+            padding: '8px 16px',
+            cursor: 'pointer',
+          }}
+        >
+          Logout
+        </button>
+      </form>
     </div>
   )
 }
