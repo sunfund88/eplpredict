@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <main style={{display:'flex',height:'100vh',justifyContent:'center',alignItems:'center'}}>
       <a
-        href="/api/auth/line/callback"
+        href="/api/auth/line/"
         style={{
           background:'#06C755',
           color:'#fff',
