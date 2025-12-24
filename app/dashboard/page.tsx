@@ -5,20 +5,23 @@ export default async function Dashboard() {
   const cookieStore = await cookies()
   const userCookie = cookieStore.get('line_user')
 
-  if (!userCookie) redirect('/')
+  if (!userCookie) {
+    redirect('/')
+  }
 
   const user = JSON.parse(userCookie.value)
 
   return (
     <div style={{ padding: 40 }}>
+      <h1>Welcome 🎉</h1>
       <img
-        src={user.picture}
+        src={user.pictureUrl}
+        alt="profile"
         width={120}
-        height={120}
         style={{ borderRadius: '50%' }}
       />
-      <h1>สวัสดี {user.name}</h1>
-      <p>LINE ID: {user.id}</p>
+      <h2>{user.displayName}</h2>
+      <p>User ID: {user.userId}</p>
     </div>
   )
 }

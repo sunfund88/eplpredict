@@ -5,15 +5,13 @@ export async function GET(req: Request) {
   const code = searchParams.get('code')
 
   if (!code) {
-    return NextResponse.json({ error: 'No code provided' }, { status: 400 })
+    return NextResponse.redirect(new URL('/', req.url))
   }
 
-  /* 1️⃣ ขอ access token */
+  /* ขอ access token */
   const tokenRes = await fetch('https://api.line.me/oauth2/v2.1/token', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       grant_type: 'authorization_code',
       code,
@@ -25,11 +23,7 @@ export async function GET(req: Request) {
 
   const tokenData = await tokenRes.json()
 
-  if (!tokenData.access_token) {
-    return NextResponse.json(tokenData, { status: 400 })
-  }
-
-  /* 2️⃣ ขอ profile */
+  /* ขอ profile */
   const profileRes = await fetch('https://api.line.me/v2/profile', {
     headers: {
       Authorization: `Bearer ${tokenData.access_token}`,
@@ -38,10 +32,17 @@ export async function GET(req: Request) {
 
   const profile = await profileRes.json()
 
-  /* 3️⃣ แสดงผล (ทดสอบ) */
-  return NextResponse.json({
+  /* redirect พร้อม cookie */
+  const res = NextResponse.redirect(new URL('/dashboard', req.url))
+
+  res.cookies.set('line_user', JSON.stringify({
     userId: profile.userId,
     displayName: profile.displayName,
     pictureUrl: profile.pictureUrl,
+  }), {
+    httpOnly: true,
+    path: '/',
   })
+
+  return res
 }
