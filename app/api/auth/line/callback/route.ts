@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
-  console.log('LINE_CLIENT_ID', process.env.LINE_CLIENT_ID)
+  console.log('LINE_CLIENT_ID', process.env.LINE_CHANNEL_ID)
   const code = req.nextUrl.searchParams.get('code')
 
   // ถ้า LINE ไม่ส่ง code มา
@@ -19,8 +19,8 @@ export async function GET(req: NextRequest) {
       grant_type: 'authorization_code',
       code,
       redirect_uri: process.env.LINE_REDIRECT_URI!,
-      client_id: process.env.LINE_CLIENT_ID!,
-      client_secret: process.env.LINE_CLIENT_SECRET!
+      client_id: process.env.LINE_CHANNEL_ID!,
+      client_secret: process.env.LINE_CHANNEL_SECRET!
     })
   })
 

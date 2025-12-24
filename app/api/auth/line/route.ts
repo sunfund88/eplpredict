@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 
 export async function GET() {
-  const clientId = process.env.LINE_CLIENT_ID
-  const redirectUri = process.env.LINE_REDIRECT_URI
+  const clientId = process.env.LINE_CHANNEL_ID
+  const redirectUri = process.env.LINE_CALLBACK_URL
 
   if (!clientId || !redirectUri) {
     return NextResponse.json({
@@ -14,7 +14,7 @@ export async function GET() {
 
   const params = new URLSearchParams({
     response_type: 'code',
-    client_id: clientId, // ต้องเป็น 2008765764
+    client_id: clientId,
     redirect_uri: redirectUri,
     scope: 'profile openid',
     state: 'login'
