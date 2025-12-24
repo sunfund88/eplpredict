@@ -1,15 +1,18 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
-const globalForPrisma = global as unknown as {
-  prisma: PrismaClient | undefined;
-};
+// ใช้ชื่อตัวแปรที่แตกต่างเพื่อเลี่ยงความสับสน
+let prisma: PrismaClient
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: ['error'],
-  });
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV === 'production') {
+  prisma = new PrismaClient()
+} else {
+  // @ts-ignore
+  if (!global.prisma) {
+    // @ts-ignore
+    global.prisma = new PrismaClient()
+  }
+  // @ts-ignore
+  prisma = global.prisma
 }
+
+export default prisma
