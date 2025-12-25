@@ -1,20 +1,14 @@
-// @ts-ignore
 import { PrismaClient } from '@prisma/client'
-console.log("DATABASE_URL:", process.env.DATABASE_URL);
-console.log("DIRECT_URL:", process.env.DIRECT_URL);
 
-let prisma: any
+// กำหนด Type ให้ global object
+const globalForPrisma = global as unknown as { prisma: PrismaClient }
 
-if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient()
-} else {
-  // @ts-ignore
-  if (!global.prisma) {
-    // @ts-ignore
-    global.prisma = new PrismaClient()
-  }
-  // @ts-ignore
-  prisma = global.prisma
-}
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    log: ['query'], // ใส่ไว้ช่วย debug ดูคำสั่ง SQL ได้ (เลือกใส่หรือไม่ก็ได้)
+  })
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 export default prisma
