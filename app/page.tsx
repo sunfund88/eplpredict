@@ -13,7 +13,7 @@ export default async function Home() {
   if (userId) {
     user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { name: true, score: true } // เลือกเฉพาะที่ต้องใช้ 
+      select: { name: true, image:true, score: true } // เลือกเฉพาะที่ต้องใช้ 
     })
   }
 
@@ -22,6 +22,14 @@ export default async function Home() {
       {user ? (
         // กรณีมี Session: แสดงชื่อ คะแนน และปุ่ม Logout
         <div style={{ textAlign: 'center' }}>
+          <div>
+            <img src={user.image!}
+            alt="profile"
+            width={120}
+            style={{ borderRadius: '50%' }}
+          />
+          </div>
+          
           <h1 style={{ marginBottom: '8px' }}>สวัสดีคุณ {user.name}</h1>
           <p style={{ fontSize: '1.2rem', color: '#555' }}>
             คะแนนของคุณ: <strong>{user.score}</strong> แต้ม
