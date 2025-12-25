@@ -16,8 +16,7 @@ export async function middleware(request: NextRequest) {
     try {
       const { payload } = await jwtVerify(token, secret)
 
-      
-        console.log("4. บันทึกสำเร็จ:", payload.role);
+        console.log("Role :", payload.role);
       if (payload.role !== 'ADMIN') {
         return NextResponse.redirect(new URL('/', request.url))
       }
