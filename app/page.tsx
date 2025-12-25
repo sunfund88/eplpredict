@@ -1,3 +1,4 @@
+import { jwtVerify } from 'jose'
 import prisma from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
@@ -6,15 +7,26 @@ import LiffProvider from '@/components/LiffProvider'
 export default async function Home() {
   // 1. ดึง user_session จาก cookies
   const cookieStore = await cookies()
-  const userId = cookieStore.get('user_session')?.value
+  const token = cookieStore.get('user_session')?.value
+  let userId = null
 
+  // 1. ตรวจสอบและถอดรหัส Token
+  if (token) {
+    try {
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+      const { payload } = await jwtVerify(token, secret)
+      userId = payload.userId as string
+    } catch (err) {
+      console.error("JWT Invalid:", err)
+    }
+  }
+
+  // 2. ถ้ามี userId ที่ถูกต้อง ให้ไปหาข้อมูลในฐานข้อมูล
   let user = null
-
-  // 2. ถ้ามี userId ให้ไปหาข้อมูลในฐานข้อมูล (Supabase)
   if (userId) {
     user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { name: true, image:true, score: true } // เลือกเฉพาะที่ต้องใช้ 
+      select: { name: true, image: true, score: true }
     })
   }
 

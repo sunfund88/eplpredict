@@ -1,5 +1,7 @@
+import { SignJWT } from 'jose'
+import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/prisma' // ดึงมาจากไฟล์ prisma.ts ที่คุณแนบมา
+import prisma from '@/lib/prisma'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -43,16 +45,21 @@ export async function GET(req: Request) {
       },
     })
 
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+    const token = await new SignJWT({ userId: user.id }) // เก็บ user.id ไว้ข้างใน
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime('30d') // หมดอายุใน 7 วัน
+      .sign(secret)
+
     console.log("4. บันทึกสำเร็จ:", user.id);
     const res = NextResponse.redirect(new URL('/', req.url))
-
-    // แนะนำ: เก็บเฉพาะ id (UUID) ที่มาจาก database ของเราเอง
-    res.cookies.set('user_session', user.id, {
+    res.cookies.set('user_session', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 วัน
+      maxAge: 60 * 60 * 24 * 30, // 7 วัน
     })
 
     return res
