@@ -5,7 +5,7 @@ import { jwtVerify } from 'jose'
 const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 
 export async function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')?.value
+  const token = request.cookies.get('user_session')?.value
 
   // ตรวจสอบเฉพาะ Path ที่ขึ้นต้นด้วย /manage
   if (request.nextUrl.pathname.startsWith('/manage')) {
@@ -15,7 +15,9 @@ export async function middleware(request: NextRequest) {
 
     try {
       const { payload } = await jwtVerify(token, secret)
+
       
+        console.log("4. บันทึกสำเร็จ:", payload.role);
       if (payload.role !== 'ADMIN') {
         return NextResponse.redirect(new URL('/', request.url))
       }
