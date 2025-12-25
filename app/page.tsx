@@ -34,7 +34,7 @@ export default async function Home() {
               ไปหน้าทายผล
             </Link>
             <a
-              href="/dashboard/logout"
+              href="/logout"
               style={{
                 background: '#ff4d4f',
                 color: '#fff',
