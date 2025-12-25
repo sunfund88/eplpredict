@@ -8,7 +8,7 @@ export async function GET(req: Request) {
   if (!code) return NextResponse.redirect(new URL('/', req.url))
 
   try {
-    /* 1. แลก Access Token จาก LINE */
+    console.log("1. เริ่มดึง Token ด้วย code:", code);    
     const tokenRes = await fetch('https://api.line.me/oauth2/v2.1/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -22,13 +22,13 @@ export async function GET(req: Request) {
     })
     const tokenData = await tokenRes.json()
 
-    /* 2. ดึง Profile จาก LINE */
+    console.log("2. ดึง Profile ด้วย Token");    
     const profileRes = await fetch('https://api.line.me/v2/profile', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
     })
     const profile = await profileRes.json()
 
-    /* 3. บันทึกลง Supabase ผ่าน Prisma (Upsert) */
+    console.log("3. กำลังบันทึกข้อมูลลง Database:", profile.userId);
     const user = await prisma.user.upsert({
       where: { lineId: profile.userId }, // อ้างอิงจาก lineId @unique ใน schema
       update: {
@@ -43,7 +43,7 @@ export async function GET(req: Request) {
       },
     })
 
-    /* 4. Redirect และเก็บข้อมูลใน Cookie */
+    console.log("4. บันทึกสำเร็จ:", user.id);
     const res = NextResponse.redirect(new URL('/', req.url))
 
     // แนะนำ: เก็บเฉพาะ id (UUID) ที่มาจาก database ของเราเอง
