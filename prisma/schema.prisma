@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  // นำบรรทัดเหล่านี้กลับมา
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
