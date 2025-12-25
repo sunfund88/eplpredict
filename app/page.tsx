@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
+import LiffProvider from '@/components/LiffProvider'
 
 export default async function Home() {
   // 1. ดึง user_session จาก cookies
@@ -19,6 +20,7 @@ export default async function Home() {
 
   return (
     <main style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: '20px' }}>
+      <LiffProvider />
       {user ? (
         // กรณีมี Session: แสดงชื่อ คะแนน และปุ่ม Logout
         <div style={{ textAlign: 'center' }}>

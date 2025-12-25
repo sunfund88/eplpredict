@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build", 
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@line/liff": "^2.27.3",
     "@prisma/client": "5.22.0",
     "@supabase/supabase-js": "^2.89.0",
     "dotenv": "^17.2.3",
