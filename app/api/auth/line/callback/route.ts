@@ -46,7 +46,13 @@ export async function GET(req: Request) {
     })
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET)
-    const token = await new SignJWT({ userId: user.id }) // เก็บ user.id ไว้ข้างใน
+
+    const payload = { 
+      userId: user.id, 
+      role: user.role
+    }
+    
+    const token = await new SignJWT(payload)
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime('30d') // หมดอายุใน 7 วัน
