@@ -1,6 +1,5 @@
 // app/manage/actions.ts
 'use server'
-
 import prisma from "@/lib/prisma"
 
 export async function fetchAndSaveFixtures(gw: number) {
@@ -8,18 +7,23 @@ export async function fetchAndSaveFixtures(gw: number) {
     const response = await fetch(`https://fantasy.premierleague.com/api/fixtures/?event=${gw}`)
     const data = await response.json()
 
-    // วนลูปจัดการข้อมูลจาก FPL API
     const promises = data.map((item: any) => {
+      // ดึงข้อมูล stats ตามลำดับที่ FPL กำหนด (0: Goals, 1: Assists)
+      const goalsData = item.stats && item.stats.length > 0 ? item.stats[0] : null
+      const assistsData = item.stats && item.stats.length > 1 ? item.stats[1] : null
+
       return prisma.fixture.upsert({
-        where: { id: item.code }, // ใช้ code เป็น id 
+        where: { id: item.code },
         update: {
-          gw: item.event, // event 
-          kickoff: new Date(item.kickoff_time), // kickoff_time 
-          home: String(item.team_h), // team_h 
-          away: String(item.team_a), // team_a 
-          homeScore: item.team_h_score, // team_h_score 
-          awayScore: item.team_a_score, // team_a_score 
+          gw: item.event,
+          kickoff: new Date(item.kickoff_time),
+          home: String(item.team_h),
+          away: String(item.team_a),
+          homeScore: item.team_h_score,
+          awayScore: item.team_a_score,
           finished: item.finished,
+          goalsScored: goalsData,
+          assists: assistsData,
         },
         create: {
           id: item.code,
@@ -30,15 +34,16 @@ export async function fetchAndSaveFixtures(gw: number) {
           homeScore: item.team_h_score,
           awayScore: item.team_a_score,
           finished: item.finished,
-          multiplier: 1, // ค่า default 
+          multiplier: 1,
+          goalsScored: goalsData,
+          assists: assistsData,
         },
       })
     })
 
     await Promise.all(promises)
-    return { success: true, message: `Updated GW ${gw} successfully!` }
+    return { success: true, message: `Updated GW ${gw} with stats successfully!` }
   } catch (error) {
-    console.error(error)
-    return { success: false, message: "Failed to fetch data" }
+    return { success: false, message: "Error updating fixtures" }
   }
 }

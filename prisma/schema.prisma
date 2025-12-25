@@ -36,6 +36,9 @@ model Fixture {
   finished    Boolean      @default(false)
   multiplier  Int          @default(1)
 
+  goalsScored Json?        
+  assists     Json?        
+
   predictions Prediction[]
 }
 
