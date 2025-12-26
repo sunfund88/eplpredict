@@ -24,19 +24,15 @@ export async function GET(request: Request) {
     }
 
     // 2. เช็คว่ามีข้อมูลส่งกลับมาไหมก่อน parse
-    const text = await response.text();
-    if (!text) {
-      throw new Error("Empty response from FPL API");
-    }
+    const data = await response.json();
+    const events = data.events;
+    let processedCount = 0;
 
-    const data = JSON.parse(text);
+    console.log(`Starting sync for ${events.length} events...`);
 
-    // 2. เตรียมข้อมูล GW ทั้งหมด
-    for (const ev of data.events) {
-      if (ev.id === 38) {
-        console.log("Found GW 38 in API data!");
-      }
-      await prisma.gameweek.upsert({
+    // ใช้ for...of เพื่อความชัวร์
+    for (const ev of events) {
+      const result = await prisma.gameweek.upsert({
         where: { gw: ev.id },
         update: {
           gwDeadline: new Date(ev.deadline_time),
@@ -53,12 +49,20 @@ export async function GET(request: Request) {
           calculated: false,
         },
       });
+
+      processedCount++;
+      if (ev.id === 38) {
+        console.log("GW 38 Upsert Result:", JSON.stringify(result));
+      }
     }
+
+    console.log(`Successfully processed ${processedCount} gameweeks.`);
 
     return NextResponse.json({ 
       success: true, 
-      message: "Gameweeks updated at 08:30 TH" 
+      processed: processedCount 
     });
+    
   } catch (error) {
     console.error("Cron Error:", error);
     return NextResponse.json({ success: false }, { status: 500 });
