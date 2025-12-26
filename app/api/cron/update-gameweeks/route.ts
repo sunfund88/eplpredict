@@ -13,8 +13,9 @@ export async function GET(request: Request) {
     {
         method: "POST",
         headers: {
-        "X-Custom-Auth": process.env.CRON_SECRET!, // ใช้ชื่อใหม่
-        "Content-Type": "application/json",
+            "Authorization": `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+            "X-Custom-Auth": process.env.CRON_SECRET!, // ใช้ชื่อใหม่
+            "Content-Type": "application/json",
         },
         body: JSON.stringify({}),
     }
