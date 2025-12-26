@@ -13,8 +13,8 @@ export async function GET(request: Request) {
     const data = await res.json();
 
     // 2. เตรียมข้อมูล GW ทั้งหมด
-    const updates = data.events.map((ev: any) => {
-      return prisma.gameweek.upsert({
+    for (const ev of data.events) {
+      await prisma.gameweek.upsert({
         where: { gw: ev.id },
         update: {
           gwDeadline: new Date(ev.deadline_time),
@@ -31,9 +31,7 @@ export async function GET(request: Request) {
           calculated: false,
         },
       });
-    });
-
-    await Promise.all(updates);
+    }
 
     return NextResponse.json({ 
       success: true, 
