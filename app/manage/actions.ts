@@ -47,3 +47,31 @@ export async function fetchAndSaveFixtures(gw: number) {
     return { success: false, message: "Error updating fixtures" }
   }
 }
+
+export async function syncGameweekStatus() {
+  try {
+    const res = await fetch("https://fantasy.premierleague.com/api/bootstrap-static/");
+    const data = await res.json();
+
+    // หา Gameweek ถัดไป (is_next: true) ตาม Logic ในภาพของคุณ
+    const nextGwData = data.events.find((ev: any) => ev.is_next === true);
+
+    if (nextGwData) {
+      await prisma.gameweek.upsert({
+        where: { gw: nextGwData.id },
+        update: {
+          gwDeadline: new Date(nextGwData.deadline_time),
+        },
+        create: {
+          gw: nextGwData.id,
+          gwDeadline: new Date(nextGwData.deadline_time),
+          calculated: false,
+        },
+      });
+      return { success: true, gw: nextGwData.id, deadline: nextGwData.deadline_time };
+    }
+  } catch (error) {
+    console.error("Sync GW Error:", error);
+    return { success: false };
+  }
+}

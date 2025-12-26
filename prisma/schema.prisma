@@ -60,6 +60,9 @@ model Gameweek {
   id          Int      @id @default(autoincrement())
   gw          Int      @unique
   gwDeadline  DateTime
+  isCurrent   Boolean  @default(false) // เพิ่มเพื่อบอกว่า GW นี้กำลังแข่ง
+  isNext      Boolean  @default(false) // เพิ่มเพื่อบอกว่า GW นี้เปิดให้ทาย
+  isFinished  Boolean  @default(false) // เพิ่มเพื่อบอกว่า GW นี้จบแล้ว
   calculated  Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
