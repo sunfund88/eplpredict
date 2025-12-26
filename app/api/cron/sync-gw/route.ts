@@ -30,9 +30,12 @@ export async function GET(request: Request) {
     }
 
     const data = JSON.parse(text);
-    
+
     // 2. เตรียมข้อมูล GW ทั้งหมด
     for (const ev of data.events) {
+      if (ev.id === 38) {
+        console.log("Found GW 38 in API data!");
+      }
       await prisma.gameweek.upsert({
         where: { gw: ev.id },
         update: {
