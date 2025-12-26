@@ -1,91 +1,83 @@
+// app/page.tsx
 import { jwtVerify } from 'jose'
 import prisma from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
-import LiffProvider from '@/components/LiffProvider'
+import HomeClient from '@/components/HomeClient' // เราจะสร้างคอมโพเนนต์นี้สำหรับ Tab Logic
 
 export default async function Home() {
-  // 1. ดึง user_session จาก cookies
   const cookieStore = await cookies()
   const token = cookieStore.get('user_session')?.value
   let userId = null
+  let user = null
 
-  // 1. ตรวจสอบและถอดรหัส Token
+  // 1. ตรวจสอบ Login
   if (token) {
     try {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET)
       const { payload } = await jwtVerify(token, secret)
       userId = payload.userId as string
+      
+      user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, name: true, image: true, score: true }
+      })
     } catch (err) {
       console.error("JWT Invalid:", err)
     }
   }
 
-  // 2. ถ้ามี userId ที่ถูกต้อง ให้ไปหาข้อมูลในฐานข้อมูล
-  let user = null
-  if (userId) {
-    user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { name: true, image: true, score: true }
-    })
-  }
-
-  return (
-    <main style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: '20px' }}>
-      <LiffProvider />
-      {user ? (
-        // กรณีมี Session: แสดงชื่อ คะแนน และปุ่ม Logout
-        <div style={{ textAlign: 'center' }}>
-          <div>
-            <img src={user.image!}
-            alt="profile"
-            width={120}
-            style={{ borderRadius: '50%' }}
-          />
-          </div>
-          
-          <h1 style={{ marginBottom: '8px' }}>สวัสดีคุณ {user.name}</h1>
-          <p style={{ fontSize: '1.2rem', color: '#555' }}>
-            คะแนนของคุณ: <strong>{user.score}</strong> แต้ม
-          </p>
-          <div style={{ marginTop: '24px' }}>
-            <Link
-              href="/dashboard"
-              style={{ marginRight: '15px', color: '#0070f3', textDecoration: 'none' }}
-            >
-              ไปหน้าทายผล
-            </Link>
-            <a
-              href="/logout"
-              style={{
-                background: '#ff4d4f',
-                color: '#fff',
-                padding: '10px 20px',
-                borderRadius: 8,
-                textDecoration: 'none',
-                fontWeight: 'bold'
-              }}
-            >
-              Logout
-            </a>
-          </div>
-        </div>
-      ) : (
-        // กรณีไม่มี Session: แสดงปุ่ม Login
+  // 2. ถ้าไม่ได้ Login ให้แสดงหน้า Login (ตามภาพร่างหน้า Login)
+  if (!user) {
+    return (
+      <main className="flex h-screen items-center justify-center bg-gray-200">
         <a
           href="/api/auth/line/"
-          style={{
-            background: '#06C755',
-            color: '#fff',
-            padding: '14px 24px',
-            borderRadius: 8,
-            textDecoration: 'none',
-            fontWeight: 'bold'
-          }}
+          className="bg-[#06C755] text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg"
         >
-          Login with LINE
+          Line Login
         </a>
-      )}
-    </main>
+      </main>
+    )
+  }
+
+  // 3. ถ้า Login แล้ว ดึงข้อมูลสำหรับ 3 Tabs
+  const [results, pending, leaderboard] = await Promise.all([
+    prisma.fixture.findMany({ where: { finished: true }, orderBy: { kickoff: 'desc' } }),
+    prisma.fixture.findMany({ where: { finished: false }, orderBy: { kickoff: 'asc' } }),
+    prisma.user.findMany({ orderBy: { score: 'desc' }, select: { name: true, image: true, score: true }, take: 50 })
+  ])
+
+  return (
+    <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
+      {/* Header ส่วนบนตามภาพร่าง */}
+      <header className="bg-blue-400 p-4 text-center text-white font-bold text-xl">
+        Header
+      </header>
+
+      {/* ข้อมูล User ส่วนกลาง */}
+      <div className="flex flex-col items-center py-6 bg-gray-100">
+        <Link href="/userdetail">
+          <img 
+            src={user.image!} 
+            className="w-24 h-24 rounded-full border-4 border-purple-600 mb-2" 
+            alt="profile" 
+          />
+        </Link>
+        <p className="font-bold text-lg">{user.name}</p>
+        <p className="text-gray-600">Score: {user.score}</p>
+      </div>
+
+      {/* ส่วนเนื้อหา 3 Tabs (ส่งข้อมูลไปจัดการต่อที่ Client) */}
+      <HomeClient 
+        initialData={{ results, pending, leaderboard }} 
+        userId={user.id} 
+      />
+      
+      {/* Footer ตามภาพร่าง */}
+      <footer className="bg-blue-400 p-4 text-center text-white font-bold mt-auto">
+        Footer
+      </footer>
+    </div>
   )
 }
