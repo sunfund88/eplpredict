@@ -30,31 +30,34 @@ export async function GET(request: Request) {
 
     console.log(`Starting sync for ${events.length} events...`);
 
-    // ใช้ for...of เพื่อความชัวร์
-    for (const ev of events) {
-      const result = await prisma.gameweek.upsert({
-        where: { gw: ev.id },
-        update: {
-          gwDeadline: new Date(ev.deadline_time),
-          isCurrent: ev.is_current,
-          isNext: ev.is_next,
-          isFinished: ev.finished,
-        },
-        create: {
-          gw: ev.id,
-          gwDeadline: new Date(ev.deadline_time),
-          isCurrent: ev.is_current,
-          isNext: ev.is_next,
-          isFinished: ev.finished,
-          calculated: false,
-        },
-      });
+    // ใช้ createMany ซึ่งจะส่งคำสั่ง SQL ไปยัง DB เพียงครั้งเดียวสำหรับข้อมูลทั้ง 38 แถว
+  // วิธีนี้จะลดโอกาสการเกิด Timeout ได้เกือบ 100%
+  await prisma.gameweek.createMany({
+    data: events.map((ev: any) => ({
+      gw: ev.id,
+      gwDeadline: new Date(ev.deadline_time),
+      isCurrent: ev.is_current,
+      isNext: ev.is_next,
+      isFinished: ev.finished,
+      calculated: false, // ค่าเริ่มต้น
+    })),
+    skipDuplicates: true, // ถ้ามี id ซ้ำ (เช่น 1-37) ให้ข้ามไป จะได้ไม่ Error
+  });
 
-      processedCount++;
-      if (ev.id === 38) {
-        console.log("GW 38 Upsert Result:", JSON.stringify(result));
+  // สำหรับตัวที่มีอยู่แล้วแต่ต้องการอัปเดตสถานะ (เช่น isCurrent, isFinished)
+  // ให้ทำเฉพาะตัวที่ Active อยู่ปัจจุบันเพื่อความเร็ว
+  const activeEvents = events.filter((ev: any) => ev.is_current || ev.is_next);
+  for (const ev of activeEvents) {
+    await prisma.gameweek.update({
+      where: { gw: ev.id },
+      data: {
+        isCurrent: ev.is_current,
+        isNext: ev.is_next,
+        isFinished: ev.finished,
       }
-    }
+    });
+    processedCount++
+  }
 
     console.log(`Successfully processed ${processedCount} gameweeks.`);
 
@@ -62,7 +65,7 @@ export async function GET(request: Request) {
       success: true, 
       processed: processedCount 
     });
-    
+
   } catch (error) {
     console.error("Cron Error:", error);
     return NextResponse.json({ success: false }, { status: 500 });
