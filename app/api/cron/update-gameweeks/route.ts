@@ -1,31 +1,39 @@
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  // 🔐 ป้องกันคนยิงมั่ว
+  // 1️⃣ ตรวจว่าเป็น Vercel Cron
   const auth = request.headers.get("authorization");
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  try {
-    const res = await fetch(
-      "https://lybozsxmolnrjnovsmzz.supabase.co/functions/v1/update-gameweeks",
-      {
-        method: "POST",
-        headers: {
-          "x-cron-secret": process.env.CRON_SECRET!,
-        },
-      }
+  // 2️⃣ เรียก Supabase Edge Function
+  const res = await fetch(
+    "https://lybozsxmolnrjnovsmzz.supabase.co/functions/v1/update-gameweeks",
+    {
+      method: "POST",
+      headers: {
+        "x-cron-secret": process.env.CRON_SECRET!,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}), // 👈 ใส่ชัดเจน
+    }
+  );
+
+  // 🔥 จุดชี้ขาด
+  const text = await res.text();
+  console.log("Supabase status:", res.status);
+  console.log("Supabase response:", text);
+
+  if (!res.ok) {
+    return new Response(
+      `Supabase error ${res.status}: ${text}`,
+      { status: 500 }
     );
-
-    const data = await res.json();
-
-    return NextResponse.json({
-      ok: true,
-      supabase: data,
-    });
-  } catch (err) {
-    console.error("Cron error:", err);
-    return new Response("Cron Failed", { status: 500 });
   }
+
+  return NextResponse.json({
+    ok: true,
+    supabase: JSON.parse(text),
+  });
 }
