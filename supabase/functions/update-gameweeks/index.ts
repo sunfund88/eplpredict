@@ -4,14 +4,9 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 serve(async (req) => {
-  const authHeader = req.headers.get("Authorization");
-  
-  // ตรวจสอบว่าส่งมาในรูปแบบ "Bearer <secret>" หรือไม่
-  if (authHeader !== `Bearer ${Deno.env.get("CRON_SECRET")}`) {
-    return new Response(
-      JSON.stringify({ error: "Unauthorized" }), 
-      { status: 401, headers: { "Content-Type": "application/json" } }
-    );
+  const cron = req.headers.get("X-Custom-Auth"); // รับจากชื่อใหม่
+  if (cron !== Deno.env.get("CRON_SECRET")) {
+    return new Response("Unauthorized", { status: 401 });
   }
 
   try {

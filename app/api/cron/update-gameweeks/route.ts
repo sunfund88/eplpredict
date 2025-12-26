@@ -9,17 +9,16 @@ export async function GET(request: Request) {
 
   // 2️⃣ เรียก Supabase Edge Function
   const res = await fetch(
-  "https://lybozsxmolnrjnovsmzz.supabase.co/functions/v1/update-gameweeks",
-  {
-    method: "POST",
-    headers: {
-      // เปลี่ยนจาก 'x-cron-secret' เป็น 'Authorization'
-      "Authorization": `Bearer ${process.env.CRON_SECRET}`, 
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({}),
-  }
-);
+    "https://lybozsxmolnrjnovsmzz.supabase.co/functions/v1/update-gameweeks",
+    {
+        method: "POST",
+        headers: {
+        "X-Custom-Auth": process.env.CRON_SECRET!, // ใช้ชื่อใหม่
+        "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+    }
+    );
 
   // 🔥 จุดชี้ขาด
   const text = await res.text();
