@@ -9,9 +9,28 @@ export async function GET(request: Request) {
   }
 
   try {
-    const res = await fetch("https://fantasy.premierleague.com/api/bootstrap-static/");
-    const data = await res.json();
+    // ตัวอย่างการแก้ไขในส่วน Fetch ข้อมูล
+    const response = await fetch("https://fantasy.premierleague.com/api/bootstrap-static/", {
+      // แนะนำให้ใส่ Headers เพื่อให้เหมือนการเรียกจาก Browser ปกติ
+      headers: {
+        'User-Agent': 'Mozilla/5.0'
+      },
+      cache: 'no-store' // ป้องกันการจำค่าเก่าที่อาจจะผิดพลาด
+    });
 
+    // 1. เช็คว่าเรียกสำเร็จไหม (Status 200)
+    if (!response.ok) {
+      throw new Error(`FPL API error: ${response.status}`);
+    }
+
+    // 2. เช็คว่ามีข้อมูลส่งกลับมาไหมก่อน parse
+    const text = await response.text();
+    if (!text) {
+      throw new Error("Empty response from FPL API");
+    }
+
+    const data = JSON.parse(text);
+    
     // 2. เตรียมข้อมูล GW ทั้งหมด
     for (const ev of data.events) {
       await prisma.gameweek.upsert({
