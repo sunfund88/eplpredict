@@ -11,30 +11,34 @@ export async function GET(request: Request) {
   try {
     const res = await fetch("https://fantasy.premierleague.com/api/bootstrap-static/");
     const data = await res.json();
+    const events = data.events;
 
-    // 2. เตรียมข้อมูล GW ทั้งหมด
-    const updates = data.events.map((ev: any) => {
-      return prisma.gameweek.upsert({
-        where: { gw: ev.id },
-        update: {
-          gwDeadline: new Date(ev.deadline_time),
-          isCurrent: ev.is_current,
-          isNext: ev.is_next,
-          isFinished: ev.finished,
-        },
-        create: {
-          gw: ev.id,
-          gwDeadline: new Date(ev.deadline_time),
-          isCurrent: ev.is_current,
-          isNext: ev.is_next,
-          isFinished: ev.finished,
-          calculated: false,
-        },
-      });
-    });
-
-    await Promise.all(updates);
-
+    // ใช้ $transaction เพื่อรวบรวมคำสั่งส่งไปทีเดียว 
+    // และลดภาระการเปิด-ปิด connection บ่อยๆ
+    await prisma.$transaction(
+      events.map((ev: any) => 
+        prisma.gameweek.upsert({
+          where: { gw: ev.id },
+          update: {
+            gwDeadline: new Date(ev.deadline_time),
+            isCurrent: ev.is_current,
+            isNext: ev.is_next,
+            isFinished: ev.finished,
+          },
+          create: {
+            gw: ev.id,
+            gwDeadline: new Date(ev.deadline_time),
+            isCurrent: ev.is_current,
+            isNext: ev.is_next,
+            isFinished: ev.finished,
+          },
+        })
+      ),
+      {
+        timeout: 10000 // เพิ่มเวลาให้ transaction นี้เป็น 10 วินาที
+      }
+    );
+    
     return NextResponse.json({ 
       success: true, 
       message: "Gameweeks updated at 08:30 TH" 
