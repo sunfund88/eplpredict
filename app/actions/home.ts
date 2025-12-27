@@ -24,6 +24,17 @@ export async function getResultActiveGW() {
   return targetGW?.gw || 1 as number // default เป็น GW1 ถ้าไม่เจอข้อมูลเลย
 }
 
+export async function getPredictActiveGW() {
+  let targetGW = await prisma.gameweek.findFirst({
+    where: {
+      isNext: true
+    },
+    select: { id: true, gw: true }
+  })
+
+  return targetGW?.gw || 1 as number // default เป็น GW1 ถ้าไม่เจอข้อมูลเลย
+}
+
 export async function getFixturesByGW(gwNumber: number) {
 
   const fixtures = await prisma.fixture.findMany({

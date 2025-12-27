@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { getResultActiveGW, getFixturesByGW } from '@/app/actions/home'
+import { getPredictActiveGW, getFixturesByGW } from '@/app/actions/home'
 import { getTeamLogo, getTeamName } from '@/lib/teams'
 
 interface Fixture {
@@ -17,9 +17,9 @@ interface Fixture {
   assists: JSON  
 }
 
-export default function ResultTab() {
+export default function PredictTab() {
   const [currentGW, setCurrentGW] = useState<number>(0)
-  const [maxGW, setMaxGW] = useState<number>(0)
+  const [minGW, setMinGW] = useState<number>(0)
   const [fixtures, setFixtures] = useState<Fixture[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -28,9 +28,9 @@ export default function ResultTab() {
     const initData = async () => {
       setLoading(true)
       try {
-        const activeGW = await getResultActiveGW()
+        const activeGW = await getPredictActiveGW()
         setCurrentGW(activeGW)
-        setMaxGW(activeGW)
+        setMinGW(activeGW)
         
         // ดึงข้อมูลและระบุ Type
         const data = await getFixturesByGW(activeGW)
@@ -48,7 +48,7 @@ export default function ResultTab() {
 
   // ฟังก์ชันเปลี่ยน GW เมื่อกดลูกศร
   const handleGWChange = async (newGW: number) => {
-    if (newGW < 1 || newGW > maxGW) return
+    if (newGW < minGW || newGW > currentGW+2) return
     setLoading(true)
     setCurrentGW(newGW)
     const data = await getFixturesByGW(newGW)

@@ -2,6 +2,7 @@
 'use client'
 import { useState } from 'react'
 import ResultTab from './ResultTab'
+import PredictTab from './PredictTab'
 
 export default function HomeClient({ userId }: { userId: string }) {
   const [activeTab, setActiveTab] = useState('predict')
@@ -35,7 +36,9 @@ export default function HomeClient({ userId }: { userId: string }) {
         {activeTab === 'result' && (
           <ResultTab />
         )}
-        {activeTab === 'predict' && <div>{/* วนลูปโชว์ฟอร์มทายผล */}</div>}
+        {activeTab === 'predict' && (
+          <PredictTab />
+        )}
         {activeTab === 'leaderboard' && <div>{/* วนลูปโชว์อันดับ */}</div>}
       </div>
     </div>
