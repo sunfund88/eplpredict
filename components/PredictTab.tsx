@@ -48,7 +48,7 @@ export default function PredictTab() {
 
   // ฟังก์ชันเปลี่ยน GW เมื่อกดลูกศร
   const handleGWChange = async (newGW: number) => {
-    if (newGW < minGW || newGW > currentGW+2) return
+    if (newGW < currentGW+2 || newGW > minGW) return
     setLoading(true)
     setCurrentGW(newGW)
     const data = await getFixturesByGW(newGW)
