@@ -19,6 +19,7 @@ interface Fixture {
 
 export default function ResultTab({ initialFixtures = [] }: { initialFixtures?: Fixture[] }) {
   const [currentGW, setCurrentGW] = useState<number>(1)
+  const [maxGW, setMaxGW] = useState<number>(1)
   const [fixtures, setFixtures] = useState<Fixture[]>(initialFixtures)
   const [loading, setLoading] = useState(true)
 
@@ -29,6 +30,7 @@ export default function ResultTab({ initialFixtures = [] }: { initialFixtures?: 
       try {
         const activeGW = await getResultActiveGW()
         setCurrentGW(activeGW)
+        setMaxGW(activeGW)
         
         // ดึงข้อมูลและระบุ Type
         const data = await getFixturesByGW(activeGW)
@@ -46,7 +48,7 @@ export default function ResultTab({ initialFixtures = [] }: { initialFixtures?: 
 
   // ฟังก์ชันเปลี่ยน GW เมื่อกดลูกศร
   const handleGWChange = async (newGW: number) => {
-    if (newGW < 1 || newGW > 38) return
+    if (newGW < 1 || newGW > maxGW) return
     setLoading(true)
     setCurrentGW(newGW)
     const data = await getFixturesByGW(newGW)

@@ -70,11 +70,7 @@ export default async function Home() {
 
       {/* ส่วนเนื้อหา 3 Tabs (ส่งข้อมูลไปจัดการต่อที่ Client) */}
       <HomeClient userId={user.id} />
-      
-      {/* Footer ตามภาพร่าง */}
-      <footer className="bg-blue-400 p-4 text-center text-white font-bold mt-auto">
-        Footer
-      </footer>
+    
     </div>
   )
 }
