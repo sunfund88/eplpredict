@@ -81,12 +81,12 @@ export default function ResultTab() {
       </div>
 
       {/* รายการผลการแข่งขัน */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
         {loading ? (
-          <p className="text-center py-10 opacity-50">กำลังโหลด...</p>
+          <p className="text-center py-10 opacity-50">Loading ...</p>
         ) : (
           fixtures.map((item: any) => (
-            <div key={item.id} className="flex items-center justify-between border-b border-white/10 pb-4">
+            <div key={item.id} className="flex items-center justify-between border-b border-white/10 pb-1">
               {/* ทีมเหย้า */}
               <div className="flex-1 flex items-center justify-end gap-3 text-right">
                 <span className="font-semibold text-sm">{getTeamName(item.home)}</span>
@@ -94,7 +94,7 @@ export default function ResultTab() {
               </div>
 
               {/* สกอร์ */}
-              <div className="mx-4 bg-[#1b001d] px-4 py-2 rounded font-bold text-lg min-w-[80px] text-center shadow-inner">
+              <div className="mx-4 bg-[#1b001d] px-3 py-1 rounded font-bold text-lg min-w-[80px] text-center shadow-inner">
                 {item.homeScore} - {item.awayScore}
               </div>
 
