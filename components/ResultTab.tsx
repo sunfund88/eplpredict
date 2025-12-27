@@ -52,6 +52,14 @@ export default function ResultTab({ initialFixtures = [] }: { initialFixtures?: 
     setFixtures(data.fixtures)
     setLoading(false)
   }
+
+  const getTeamLogo = (teamId: number) => {
+  const teamCodes: Record<number, number> = {
+    1: 3, 2: 7, 3: 91, 4: 94, 5: 36, 6: 8, 7: 13, 8: 20, 9: 11, 10: 54,
+    11: 40, 12: 13, 13: 14, 14: 43, 15: 1, 16: 4, 17: 17, 18: 6, 19: 21, 20: 39
+  };
+  return `https://resources.premierleague.com/premierleague/badges/t${teamCodes[teamId]}.svg`;
+};
   return (
     <div className="flex flex-col bg-[#38003c] min-h-screen text-white p-4">
       {/* ส่วนหัวแสดงเลข Gameweek */}
@@ -86,7 +94,7 @@ export default function ResultTab({ initialFixtures = [] }: { initialFixtures?: 
               {/* ทีมเหย้า */}
               <div className="flex-1 flex items-center justify-end gap-3 text-right">
                 <span className="font-semibold text-sm">{item.home}</span>
-                <img src={item.home} alt="" className="w-8 h-8 object-contain" />
+                <img src={getTeamLogo(item.home)} alt="home-logo" className="w-8 h-8" />
               </div>
 
               {/* สกอร์ */}
@@ -96,7 +104,7 @@ export default function ResultTab({ initialFixtures = [] }: { initialFixtures?: 
 
               {/* ทีมเยือน */}
               <div className="flex-1 flex items-center justify-start gap-3 text-left">
-                <img src={item.away} alt="" className="w-8 h-8 object-contain" />
+                <img src={getTeamLogo(item.away)} alt="away-logo" className="w-8 h-8" />
                 <span className="font-semibold text-sm">{item.away}</span>
               </div>
             </div>
