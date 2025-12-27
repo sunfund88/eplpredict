@@ -88,18 +88,18 @@ export default function ResultTab() {
           fixtures.map((item: any) => (
             <div key={item.id} className="flex items-center justify-between border-b border-white/10 pb-1">
               {/* ทีมเหย้า */}
-              <div className="flex-1 flex items-center justify-end gap-3 text-right">
+              <div className="flex-1 flex items-center justify-end gap-2 text-right">
                 <span className="font-semibold text-sm">{getTeamName(item.home)}</span>
                 <img src={getTeamLogo(item.home)} alt="home-logo" className="w-8 h-8" />
               </div>
 
               {/* สกอร์ */}
-              <div className="mx-4 bg-[#1b001d] px-3 py-1 rounded font-bold text-lg min-w-[80px] text-center shadow-inner">
+              <div className="mx-2 bg-[#1b001d] px-3 py-1 rounded font-bold text-lg min-w-[80px] text-center shadow-inner">
                 {item.homeScore} - {item.awayScore}
               </div>
 
               {/* ทีมเยือน */}
-              <div className="flex-1 flex items-center justify-start gap-3 text-left">
+              <div className="flex-1 flex items-center justify-start gap-2 text-left">
                 <img src={getTeamLogo(item.away)} alt="away-logo" className="w-8 h-8" />
                 <span className="font-semibold text-sm">{getTeamName(item.away)}</span>
               </div>
