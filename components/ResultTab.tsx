@@ -87,7 +87,7 @@ export default function ResultTab({ initialFixtures = [] }: { initialFixtures?: 
             <div key={item.id} className="flex items-center justify-between border-b border-white/10 pb-4">
               {/* ทีมเหย้า */}
               <div className="flex-1 flex items-center justify-end gap-3 text-right">
-                <span className="font-semibold text-sm">{getTeamName(item.home, 'full')}</span>
+                <span className="font-semibold text-sm">{getTeamName(item.home)}</span>
                 <img src={getTeamLogo(item.home)} alt="home-logo" className="w-8 h-8" />
               </div>
 
@@ -99,7 +99,7 @@ export default function ResultTab({ initialFixtures = [] }: { initialFixtures?: 
               {/* ทีมเยือน */}
               <div className="flex-1 flex items-center justify-start gap-3 text-left">
                 <img src={getTeamLogo(item.away)} alt="away-logo" className="w-8 h-8" />
-                <span className="font-semibold text-sm">{getTeamName(item.away, 'full')}</span>
+                <span className="font-semibold text-sm">{getTeamName(item.away)}</span>
               </div>
             </div>
           ))
