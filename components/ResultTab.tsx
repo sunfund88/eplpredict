@@ -18,8 +18,8 @@ interface Fixture {
 }
 
 export default function ResultTab() {
-  const [currentGW, setCurrentGW] = useState<number>(1)
-  const [maxGW, setMaxGW] = useState<number>(1)
+  const [currentGW, setCurrentGW] = useState<number>(0)
+  const [maxGW, setMaxGW] = useState<number>(0)
   const [fixtures, setFixtures] = useState<Fixture[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -59,6 +59,7 @@ export default function ResultTab() {
   return (
     <div className="flex flex-col bg-[#38003c] min-h-screen text-white p-4">
       {/* ส่วนหัวแสดงเลข Gameweek */}
+      
       <div className="flex items-center justify-between mb-6">
         <button 
           onClick={() => handleGWChange(currentGW - 1)}
@@ -67,10 +68,13 @@ export default function ResultTab() {
           <span className="text-xl">❮</span>
         </button>
 
-        <div className="text-center">
-          <h2 className="text-xl font-bold">Gameweek {currentGW}</h2>
-          <p className="text-xs text-gray-300">ผลการแข่งขันประจำสัปดาห์</p>
-        </div>
+        {loading ? (
+          <p className="text-center py-10 opacity-50">Loading ...</p>
+        ) : (
+          <div className="text-center">
+            <h2 className="text-xl font-bold">Gameweek {currentGW}</h2>
+          </div>
+        )}
 
         <button 
           onClick={() => handleGWChange(currentGW + 1)}
