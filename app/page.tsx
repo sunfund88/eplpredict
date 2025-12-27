@@ -54,7 +54,7 @@ export default async function Home() {
         
         {/* 1. รูปพื้นหลัง EPL Predict */}
         <img 
-          src="/public/logo.png" 
+          src="/logo.png" 
           alt="EPL Header" 
           className="absolute inset-0 w-full h-full object-cover"
         />
