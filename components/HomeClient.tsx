@@ -1,8 +1,9 @@
 // components/HomeClient.tsx
 'use client'
 import { useState } from 'react'
+import ResultTab from './ResultTab'
 
-export default function HomeClient({ initialData, userId }: any) {
+export default function HomeClient({ userId }: { userId: string }) {
   const [activeTab, setActiveTab] = useState('predict')
 
   // สีของพื้นหลังตามที่วาดไว้ในภาพร่าง
@@ -31,7 +32,9 @@ export default function HomeClient({ initialData, userId }: any) {
 
       {/* เนื้อหาที่เปลี่ยนไปตาม Tab พร้อมสีพื้นหลัง */}
       <div className={`flex-1 p-4 ${tabConfigs[activeTab].color}`}>
-        {activeTab === 'result' && <div>{/* วนลูปโชว์ผลการแข่ง */}</div>}
+        {activeTab === 'result' && (
+          <ResultTab />
+        )}
         {activeTab === 'predict' && <div>{/* วนลูปโชว์ฟอร์มทายผล */}</div>}
         {activeTab === 'leaderboard' && <div>{/* วนลูปโชว์อันดับ */}</div>}
       </div>

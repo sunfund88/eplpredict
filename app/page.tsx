@@ -3,7 +3,7 @@ import { jwtVerify } from 'jose'
 import prisma from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
-import HomeClient from '@/components/HomeClient' // เราจะสร้างคอมโพเนนต์นี้สำหรับ Tab Logic
+import HomeClient from '@/components/HomeClient'
 
 export default async function Home() {
   const cookieStore = await cookies()
@@ -42,11 +42,11 @@ export default async function Home() {
   }
 
   // 3. ถ้า Login แล้ว ดึงข้อมูลสำหรับ 3 Tabs
-  const [results, pending, leaderboard] = await Promise.all([
-    prisma.fixture.findMany({ where: { finished: true }, orderBy: { kickoff: 'desc' } }),
-    prisma.fixture.findMany({ where: { finished: false }, orderBy: { kickoff: 'asc' } }),
-    prisma.user.findMany({ orderBy: { score: 'desc' }, select: { name: true, image: true, score: true }, take: 50 })
-  ])
+  // const [results, pending, leaderboard] = await Promise.all([
+  //   prisma.fixture.findMany({ where: { finished: true }, orderBy: { kickoff: 'desc' } }),
+  //   prisma.fixture.findMany({ where: { finished: false }, orderBy: { kickoff: 'asc' } }),
+  //   prisma.user.findMany({ orderBy: { score: 'desc' }, select: { name: true, image: true, score: true }, take: 50 })
+  // ])
 
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
@@ -69,10 +69,7 @@ export default async function Home() {
       </div>
 
       {/* ส่วนเนื้อหา 3 Tabs (ส่งข้อมูลไปจัดการต่อที่ Client) */}
-      <HomeClient 
-        initialData={{ results, pending, leaderboard }} 
-        userId={user.id} 
-      />
+      <HomeClient userId={user.id} />
       
       {/* Footer ตามภาพร่าง */}
       <footer className="bg-blue-400 p-4 text-center text-white font-bold mt-auto">
