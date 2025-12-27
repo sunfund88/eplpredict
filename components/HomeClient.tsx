@@ -8,7 +8,7 @@ export default function HomeClient({ userId }: { userId: string }) {
 
   // สีของพื้นหลังตามที่วาดไว้ในภาพร่าง
   const tabConfigs: any = {
-    result: { color: 'bg-pink-400', label: 'Result' },
+    result: { color: 'bg-[#38003c]', label: 'Result' },
     predict: { color: 'bg-yellow-400', label: 'Predict' },
     leaderboard: { color: 'bg-red-500', label: 'Scoreboard' }
   }
@@ -31,7 +31,7 @@ export default function HomeClient({ userId }: { userId: string }) {
       </div>
 
       {/* เนื้อหาที่เปลี่ยนไปตาม Tab พร้อมสีพื้นหลัง */}
-      <div className={`flex-1 p-4 ${tabConfigs[activeTab].color}`}>
+      <div className={`flex-1 ${tabConfigs[activeTab].color}`}>
         {activeTab === 'result' && (
           <ResultTab />
         )}
