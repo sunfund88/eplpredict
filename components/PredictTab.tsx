@@ -1,113 +1,68 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { getPredictActiveGW, getFixturesByGW } from '@/app/actions/home'
-import { getTeamLogo, getTeamName } from '@/lib/teams'
-
-interface Fixture {
-  id: string;
-  gw: string;
-  kickoff: Date;
-  home: string;
-  away: string;
-  homeScore: string;
-  awayScore: number;
-  finished: boolean
-  multiplier: number
-  goalsScored: JSON   
-  assists: JSON  
-}
+import { getPredictActiveGW, getFixturesByGW, getUserPredictions } from '@/app/actions/home'
+import PredictionRow from './PredictionRow' // Import row ที่สร้างใหม่
 
 export default function PredictTab() {
   const [currentGW, setCurrentGW] = useState<number>(0)
   const [minGW, setMinGW] = useState<number>(0)
-  const [fixtures, setFixtures] = useState<Fixture[]>([])
+  const [fixtures, setFixtures] = useState<any[]>([])
+  const [predictions, setPredictions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  // ดึงค่า GW เริ่มต้นเมื่อเข้าหน้า Tab ครั้งแรก
-  useEffect(() => {
-    const initData = async () => {
-      setLoading(true)
-      try {
-        const activeGW = await getPredictActiveGW()
-        setCurrentGW(activeGW)
-        setMinGW(activeGW)
-        
-        // ดึงข้อมูลและระบุ Type
-        const data = await getFixturesByGW(activeGW)
-        if (data && data.fixtures) {
-          setFixtures(data.fixtures as Fixture[])
-        }
-      } catch (error) {
-        console.error("Failed to fetch fixtures:", error)
-      } finally {
-        setLoading(false)
-      }
+  // สมมติ UserId (ในระบบจริงดึงจาก Session/Auth)
+  const mockUserId = "user-123" 
+
+  const fetchData = async (gw: number) => {
+    setLoading(true)
+    const data = await getFixturesByGW(gw)
+    if (data && data.fixtures) {
+      setFixtures(data.fixtures)
+      // ดึงข้อมูลการทายของผู้ใช้สำหรับ Fixtures เหล่านี้
+      const fIds = data.fixtures.map((f: any) => f.id)
+      const userPreds = await getUserPredictions(mockUserId, fIds)
+      setPredictions(userPreds)
     }
-    initData()
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    const init = async () => {
+      const activeGW = await getPredictActiveGW()
+      setCurrentGW(activeGW)
+      setMinGW(activeGW)
+      await fetchData(activeGW)
+    }
+    init()
   }, [])
 
-  // ฟังก์ชันเปลี่ยน GW เมื่อกดลูกศร
   const handleGWChange = async (newGW: number) => {
-    if (newGW < (currentGW+2) || newGW > minGW) return
-    setLoading(true)
+    if (newGW < minGW || newGW > (currentGW + 2)) return
     setCurrentGW(newGW)
-    const data = await getFixturesByGW(newGW)
-    setFixtures(data.fixtures)
-    setLoading(false)
+    await fetchData(newGW)
   }
 
   return (
     <div className="flex flex-col bg-[#38003c] min-h-screen text-white p-4">
-      {/* ส่วนหัวแสดงเลข Gameweek */}
-      
+      {/* Header (เหมือนเดิม) */}
       <div className="flex items-center justify-between mb-6">
-        <button 
-          onClick={() => handleGWChange(currentGW - 1)}
-          className="p-2 rounded-full bg-white/10 hover:bg-white/20"
-        >
-          <span className="text-xl">❮</span>
-        </button>
-
-        {loading ? (
-          <p className="text-center opacity-50"></p>
-        ) : (
-          <div className="text-center">
-            <h2 className="text-xl font-bold">Gameweek {currentGW}</h2>
-          </div>
-        )}
-
-        <button 
-          onClick={() => handleGWChange(currentGW + 1)}
-          className="p-2 rounded-full bg-white/10 hover:bg-white/20"
-        >
-          <span className="text-xl">❯</span>
-        </button>
+        <button onClick={() => handleGWChange(currentGW - 1)} className="p-2">❮</button>
+        <h2 className="text-xl font-bold">Gameweek {currentGW}</h2>
+        <button onClick={() => handleGWChange(currentGW + 1)} className="p-2">❯</button>
       </div>
 
-      {/* รายการผลการแข่งขัน */}
-      <div className="flex flex-col gap-1">
+      {/* List */}
+      <div className="flex flex-col gap-4">
         {loading ? (
           <p className="text-center py-10 opacity-50">Loading ...</p>
         ) : (
-          fixtures.map((item: any) => (
-            <div key={item.id} className="flex items-center justify-between border-b border-white/10 pb-1">
-              {/* ทีมเหย้า */}
-              <div className="flex-1 flex items-center justify-end gap-2 text-right">
-                <span className="font-semibold text-sm">{getTeamName(item.home)}</span>
-                <img src={getTeamLogo(item.home)} alt="home-logo" className="w-8 h-8" />
-              </div>
-
-              {/* สกอร์ */}
-              <div className="mx-2 bg-[#1b001d] px-3 py-1 rounded font-bold text-lg min-w-[80px] text-center shadow-inner">
-                {item.homeScore} - {item.awayScore}
-              </div>
-
-              {/* ทีมเยือน */}
-              <div className="flex-1 flex items-center justify-start gap-2 text-left">
-                <img src={getTeamLogo(item.away)} alt="away-logo" className="w-8 h-8" />
-                <span className="font-semibold text-sm">{getTeamName(item.away)}</span>
-              </div>
-            </div>
+          fixtures.map((item) => (
+            <PredictionRow 
+              key={item.id} 
+              fixture={item} 
+              userId={mockUserId}
+              initialPrediction={predictions.find(p => p.fixtureId === item.id)}
+            />
           ))
         )}
       </div>
