@@ -37,7 +37,7 @@ export default function HomeClient({ userId }: { userId: string }) {
           <ResultTab />
         )}
         {activeTab === 'predict' && (
-          <PredictTab />
+          <PredictTab userId={userId}/>
         )}
         {activeTab === 'leaderboard' && <div>{/* วนลูปโชว์อันดับ */}</div>}
       </div>

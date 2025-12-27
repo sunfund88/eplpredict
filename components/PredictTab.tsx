@@ -3,15 +3,12 @@ import { useState, useEffect } from 'react'
 import { getPredictActiveGW, getFixturesByGW, getUserPredictions } from '@/app/actions/home'
 import PredictionRow from './PredictionRow' // Import row ที่สร้างใหม่
 
-export default function PredictTab() {
+export default function PredictTab({ userId }: { userId: string }) {
   const [currentGW, setCurrentGW] = useState<number>(0)
   const [minGW, setMinGW] = useState<number>(0)
   const [fixtures, setFixtures] = useState<any[]>([])
   const [predictions, setPredictions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-
-  // สมมติ UserId (ในระบบจริงดึงจาก Session/Auth)
-  const mockUserId = "user-123" 
 
   const fetchData = async (gw: number) => {
     setLoading(true)
@@ -20,7 +17,7 @@ export default function PredictTab() {
       setFixtures(data.fixtures)
       // ดึงข้อมูลการทายของผู้ใช้สำหรับ Fixtures เหล่านี้
       const fIds = data.fixtures.map((f: any) => f.id)
-      const userPreds = await getUserPredictions(mockUserId, fIds)
+      const userPreds = await getUserPredictions(userId, fIds)
       setPredictions(userPreds)
     }
     setLoading(false)
@@ -60,7 +57,7 @@ export default function PredictTab() {
             <PredictionRow 
               key={item.id} 
               fixture={item} 
-              userId={mockUserId}
+              userId={userId}
               initialPrediction={predictions.find(p => p.fixtureId === item.id)}
             />
           ))
