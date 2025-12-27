@@ -17,10 +17,10 @@ interface Fixture {
   assists: JSON  
 }
 
-export default function ResultTab({ initialFixtures = [] }: { initialFixtures?: Fixture[] }) {
+export default function ResultTab() {
   const [currentGW, setCurrentGW] = useState<number>(1)
   const [maxGW, setMaxGW] = useState<number>(1)
-  const [fixtures, setFixtures] = useState<Fixture[]>(initialFixtures)
+  const [fixtures, setFixtures] = useState<Fixture[]>([])
   const [loading, setLoading] = useState(true)
 
   // ดึงค่า GW เริ่มต้นเมื่อเข้าหน้า Tab ครั้งแรก

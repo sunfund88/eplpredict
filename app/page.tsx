@@ -50,22 +50,45 @@ export default async function Home() {
 
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
-      {/* Header ส่วนบนตามภาพร่าง */}
-      <header className="bg-blue-400 p-4 text-center text-white font-bold text-xl">
-        Header
-      </header>
+      <div className="relative w-[425px] h-[120px] overflow-hidden shadow-md mx-auto">
+        
+        {/* 1. รูปพื้นหลัง EPL Predict */}
+        <img 
+          src="/EPL.png" 
+          alt="EPL Header" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
 
-      {/* ข้อมูล User ส่วนกลาง */}
-      <div className="flex flex-col items-center py-6 bg-gray-100">
-        <Link href="/userdetail">
-          <img 
-            src={user.image!} 
-            className="w-24 h-24 rounded-full border-4 border-purple-600 mb-2" 
-            alt="profile" 
-          />
-        </Link>
-        <p className="font-bold text-lg">{user.name}</p>
-        <p className="text-gray-600">Score: {user.score}</p>
+        {/* 2. Layer ข้อมูล User ที่วางทับ (ใช้ Flex เพื่อจัดวาง) */}
+        <div className="relative z-10 flex items-center h-full px-6 bg-black/10"> 
+          
+          {/* รูป Profile */}
+          <Link href="/userdetail" className="flex-shrink-0">
+            <div className="relative w-20 h-20 rounded-full border-2 border-white overflow-hidden shadow-lg">
+              <img 
+                src={user.image!} 
+                className="w-full h-full object-cover" 
+                alt="profile" 
+              />
+            </div>
+          </Link>
+
+          {/* ชื่อและคะแนน */}
+          <div className="ml-4 text-white drop-shadow-md">
+            <h2 className="text-xl font-black italic uppercase leading-none">
+              {user.name}
+            </h2>
+            <div className="mt-1 flex items-center">
+              <span className="bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded-sm mr-2 uppercase">
+                Score
+              </span>
+              <span className="text-2xl font-bold leading-none">
+                {user.score}
+              </span>
+            </div>
+          </div>
+
+        </div>
       </div>
 
       {/* ส่วนเนื้อหา 3 Tabs (ส่งข้อมูลไปจัดการต่อที่ Client) */}
