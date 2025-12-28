@@ -36,7 +36,7 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
   }
 
   return (
-    <div className="fixture-card">
+    <div className={`fixture-card ${isSaved ? 'bg-white/30' : 'bg-transparent'}`}>
       <div className="flex">
         {/* Home Team Section */}
         <div className="fixture-home">
