@@ -20,7 +20,7 @@ export default function HomeClient({ userId }: { userId: string }) {
   // สีของพื้นหลังตามที่วาดไว้ในภาพร่าง
   const tabConfigs: any = {
     result: { color: 'bg-[#38003c]', label: 'Result' },
-    predict: { color: 'bg-yellow-400', label: 'Predict' },
+    predict: { color: 'bg-[#38003c]', label: 'Predict' },
     leaderboard: { color: 'bg-red-500', label: 'Scoreboard' }
   }
 
@@ -46,7 +46,7 @@ export default function HomeClient({ userId }: { userId: string }) {
         {activeTab === 'result' && (
           <ResultTab />
         )}
-        
+
         {/* แก้ไขตรงนี้: เพิ่มเช็ค nextGW !== 0 */}
         {activeTab === 'predict' && nextGW !== 0 && (
           <PredictTab userId={userId} nextGW={nextGW}/>
@@ -54,7 +54,7 @@ export default function HomeClient({ userId }: { userId: string }) {
 
         {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
         {activeTab === 'predict' && nextGW === 0 && (
-          <div className="text-center py-10 text-purple-900 font-bold">Initializing Gameweek...</div>
+          <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
         )}
 
         {activeTab === 'leaderboard' && <div>{/* วนลูปโชว์อันดับ */}</div>}

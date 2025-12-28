@@ -7,9 +7,10 @@ interface PredictionRowProps {
   fixture: any;
   initialPrediction?: any;
   userId: string;
+  isPast: boolean
 }
 
-export default function PredictionRow({ fixture, initialPrediction, userId }: PredictionRowProps) {
+export default function PredictionRow({ fixture, initialPrediction, userId, isPast }: PredictionRowProps) {
   // ตั้งค่าเริ่มต้นเป็น 0 ถ้าไม่มีข้อมูลเดิม
   const [homeScore, setHomeScore] = useState<number>(initialPrediction?.predHome ?? 0)
   const [awayScore, setAwayScore] = useState<number>(initialPrediction?.predAway ?? 0)
@@ -34,7 +35,30 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
       alert("เกิดข้อผิดพลาด")
     }
   }
+  if (isPast) {
+    return (
+      <div className="flex items-center justify-between w-full border-b border-white/5 py-3 px-2">
+        {/* ทีมเหย้า */}
+        <div className="flex-1 flex items-center justify-end gap-3">
+          <span className="font-medium text-sm text-white">{getTeamShortName(fixture.home)}</span>
+          <img src={getTeamLogo(fixture.home)} className="w-8 h-8" />
+        </div>
 
+        {/* สกอร์ตรงกลาง (พื้นหลังดำ) */}
+        <div className="mx-4 bg-black/60 px-4 py-1 rounded-sm min-w-[70px] text-center">
+          <span className="text-xl font-bold tracking-widest text-white">
+            {fixture.homeScore ?? '-'} - {fixture.awayScore ?? '-'}
+          </span>
+        </div>
+
+        {/* ทีมเยือน */}
+        <div className="flex-1 flex items-center justify-start gap-3">
+          <img src={getTeamLogo(fixture.away)} className="w-8 h-8" />
+          <span className="font-medium text-sm text-white">{getTeamShortName(fixture.away)}</span>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className={`fixture-card ${isSaved ? 'bg-green-500/35' : 'bg-transparent'}`}>
       <div className="flex">

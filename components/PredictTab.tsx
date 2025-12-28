@@ -5,7 +5,6 @@ import PredictionRow from './PredictionRow' // Import row ที่สร้า�
 
 export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:number }) {
   const [currentGW, setCurrentGW] = useState<number>(nextGW)
-  const [minGW, setMinGW] = useState<number>(0)
   const [fixtures, setFixtures] = useState<any[]>([])
   const [predictions, setPredictions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -26,14 +25,13 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   useEffect(() => {
     const init = async () => {
       setCurrentGW(nextGW)
-      setMinGW(nextGW)
       await fetchData(nextGW)
     }
     init()
   }, [])
 
   const handleGWChange = async (newGW: number) => {
-    if (newGW < minGW || newGW > (currentGW + 2)) return
+    if (newGW < 1 || newGW > currentGW) return
     setCurrentGW(newGW)
     await fetchData(newGW)
   }
@@ -58,6 +56,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
               fixture={item} 
               userId={userId}
               initialPrediction={predictions.find(p => p.fixtureId === item.id)}
+              isPast={currentGW < nextGW}
             />
           ))
         )}
