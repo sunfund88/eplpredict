@@ -10,12 +10,12 @@ export default function HomeClient({ userId }: { userId: string }) {
   const [nextGW, setNextGW] = useState<number>(0)
 
   useEffect(() => {
-      const init = async () => {
-        const activeGW = await getPredictActiveGW()
-        setNextGW(activeGW)
-      }
-      init()
-    }, [])
+    const init = async () => {
+      const activeGW = await getPredictActiveGW()
+      setNextGW(activeGW)
+    }
+    init()
+  }, [])
 
   // สีของพื้นหลังตามที่วาดไว้ในภาพร่าง
   const tabConfigs: any = {
@@ -46,9 +46,17 @@ export default function HomeClient({ userId }: { userId: string }) {
         {activeTab === 'result' && (
           <ResultTab />
         )}
-        {activeTab === 'predict' && (
+        
+        {/* แก้ไขตรงนี้: เพิ่มเช็ค nextGW !== 0 */}
+        {activeTab === 'predict' && nextGW !== 0 && (
           <PredictTab userId={userId} nextGW={nextGW}/>
         )}
+
+        {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
+        {activeTab === 'predict' && nextGW === 0 && (
+          <div className="text-center py-10 text-purple-900 font-bold">Initializing Gameweek...</div>
+        )}
+
         {activeTab === 'leaderboard' && <div>{/* วนลูปโชว์อันดับ */}</div>}
       </div>
     </div>
