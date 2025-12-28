@@ -12,6 +12,8 @@ interface PredictionRowProps {
 
 export default function PredictionRow({ fixture, initialPrediction, userId, isPast }: PredictionRowProps) {
   // ตั้งค่าเริ่มต้นเป็น 0 ถ้าไม่มีข้อมูลเดิม
+  const [initHomeScore, setInitHomeScore] = useState<number>(initialPrediction?.predHome ?? 0)
+  const [initAwayScore, setInitAwayScore] = useState<number>(initialPrediction?.predAway ?? 0)
   const [homeScore, setHomeScore] = useState<number>(initialPrediction?.predHome ?? 0)
   const [awayScore, setAwayScore] = useState<number>(initialPrediction?.predAway ?? 0)
   const [isSaved, setIsSaved] = useState(!!initialPrediction)
@@ -20,8 +22,14 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
     setIsSaved(false); // เมื่อกดปุ่ม ให้ถือว่ายังไม่ได้บันทึกค่าใหม่
     if (team === 'home') {
       setHomeScore(prev => Math.max(0, prev + delta));
+      if(homeScore===initHomeScore){
+        setIsSaved(true)
+      }
     } else {
       setAwayScore(prev => Math.max(0, prev + delta));
+      if(awayScore===initAwayScore){
+        setIsSaved(true)
+      }      
     }
   }
 
