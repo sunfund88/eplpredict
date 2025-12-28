@@ -46,7 +46,7 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
     }
   }
 
-  if (isPast && testMode) {
+  if (isPast && !testMode) {
     return (
       <div className="flex items-center justify-between w-full border-b border-white/5 py-3 px-2">
         {/* ทีมเหย้า */}
