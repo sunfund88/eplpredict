@@ -1,4 +1,21 @@
-@import "tailwindcss";
+@import "tailwindcss";@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .fixture-card {
+    @apply flex flex-col items-center justify-between w-full rounded-md border border-white/10 p-2 mb-2;
+  }
+  .fixture-home{
+    @apply flex-1 flex flex-col items-end gap-1
+  }
+  .fixture-away{
+    @apply flex-1 flex flex-col items-start gap-1
+  }
+  .fixture-button-group{
+    @apply flex justify-center gap-4 mt-3
+  }
+
+}
 
 :root {
   --background: #ffffff;

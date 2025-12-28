@@ -36,11 +36,10 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
   }
 
   return (
-    <div className="flex flex-col border-b border-white/10 pb-4 mb-4">
-      <div className="flex items-center justify-between gap-4">
-        
+    <div className="fixture-card">
+      <div className="flex">
         {/* Home Team Section */}
-        <div className="flex-1 flex flex-col items-center gap-1">
+        <div className="fixture-home">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-sm">{getTeamName(fixture.home)}</span>
             <img src={getTeamLogo(fixture.home)} alt="home" className="w-8 h-8" />
@@ -61,10 +60,12 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
           </div>
         </div>
 
-        <div className="text-white font-bold text-xl self-end pb-2">VS</div>
+        <div className="px-4 text-white font-bold text-xl">
+            VS
+        </div>
 
         {/* Away Team Section */}
-        <div className="flex-1 flex flex-col items-center gap-1">
+        <div className="fixture-away">
           <div className="flex items-center gap-2">
             <img src={getTeamLogo(fixture.away)} alt="away" className="w-8 h-8" />
             <span className="font-semibold text-sm">{getTeamName(fixture.away)}</span>
@@ -84,11 +85,10 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
             >+</button>
           </div>
         </div>
-
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-center gap-4 mt-4">
+      <div className="fixture-button-group">
         <button 
           onClick={handlePredict}
           disabled={isSaved}
