@@ -2,7 +2,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { getPredictActiveGW } from '@/app/actions/home'
-import ResultTab from './ResultTab'
+import StatusTab from './StatusTab'
 import PredictTab from './PredictTab'
 
 export default function HomeClient({ userId }: { userId: string }) {
@@ -44,7 +44,7 @@ export default function HomeClient({ userId }: { userId: string }) {
       {/* เนื้อหาที่เปลี่ยนไปตาม Tab พร้อมสีพื้นหลัง */}
       <div className={`flex-1 ${tabConfigs[activeTab].color}`}>
         {activeTab === 'status_tab' && (
-          <ResultTab />
+          <StatusTab nextGW={nextGW} onNavigate={() => setActiveTab('fixture_tab')} />
         )}
 
         {/* แก้ไขตรงนี้: เพิ่มเช็ค nextGW !== 0 */}
