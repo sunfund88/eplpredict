@@ -47,7 +47,7 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
         {/* สกอร์ตรงกลาง (พื้นหลังดำ) */}
         <div className="mx-4 bg-black/60 px-4 py-1 rounded-sm min-w-[70px] text-center">
           <span className="text-xl font-bold tracking-widest text-white">
-            {fixture.homeScore ?? '-'} - {fixture.awayScore ?? '-'}
+            {fixture.homeScore ?? ''} - {fixture.awayScore ?? ''}
           </span>
         </div>
 

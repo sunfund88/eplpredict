@@ -31,7 +31,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   }, [])
 
   const handleGWChange = async (newGW: number) => {
-    if (newGW < 1 || newGW > currentGW) return
+    if (newGW < 1 || newGW > nextGW) return
     setCurrentGW(newGW)
     await fetchData(newGW)
   }
