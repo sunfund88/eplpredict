@@ -22,6 +22,12 @@ export default function Manage() {
     <div className="max-w-md mx-auto bg-green-400 text-black min-h-screen flex flex-col">
       <h1 className="text-2xl font-bold mt-4">Welcome 🎉 ADMIN</h1>
 
+      {message && (
+        <p className={`mt-4 p-2 rounded ${message.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+          {message}
+        </p>
+      )}
+
       <h2 className="text-2xl font-bold">Sync Fixtures</h2>
       <div className="flex gap-4 items-center border p-6 rounded-lg bg-gray-50">
         <div>
@@ -45,14 +51,6 @@ export default function Manage() {
           {loading ? 'Updating...' : 'Sync Fixtures from FPL'}
         </button>
       </div>
-
-      {message && (
-        <p className={`mt-4 p-2 rounded ${message.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-          {message}
-        </p>
-      )}
-
-      
     </div>
   )
 }
