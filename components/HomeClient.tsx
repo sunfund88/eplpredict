@@ -53,8 +53,8 @@ export default function HomeClient({ userId }: { userId: string }) {
         {activeTab === 'status_tab' && nextGW === 0 && (
           <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
         )}
-        {activeTab === 'status_tab' && (
-          <StatusTab nextGW={nextGW} finishedGW={finishedGW} isLive={isLive} onNavigate={() => setActiveTab('fixture_tab')} />
+        {activeTab === 'status_tab' && nextGW !== 0 && (
+          <StatusTab nextGW={nextGW} finishedGW={finishedGW} calculatedGW={calculatedGW} isLive={isLive} onNavigate={() => setActiveTab('fixture_tab')} />
         )}
 
         {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
