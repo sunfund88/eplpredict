@@ -8,9 +8,10 @@ interface PredictionRowProps {
   initialPrediction?: any;
   userId: string;
   isPast: boolean
+  testMode: boolean
 }
 
-export default function PredictionRow({ fixture, initialPrediction, userId, isPast }: PredictionRowProps) {
+export default function PredictionRow({ fixture, initialPrediction, userId, isPast, testMode }: PredictionRowProps) {
   const [homeScore, setHomeScore] = useState<number>(initialPrediction?.predHome ?? 0)
   const [awayScore, setAwayScore] = useState<number>(initialPrediction?.predAway ?? 0)
   const [isSaved, setIsSaved] = useState(!!initialPrediction)
@@ -44,7 +45,8 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
       alert("เกิดข้อผิดพลาด")
     }
   }
-  if (isPast) {
+
+  if (isPast && testMode) {
     return (
       <div className="flex items-center justify-between w-full border-b border-white/5 py-3 px-2">
         {/* ทีมเหย้า */}
@@ -68,6 +70,7 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
       </div>
     )
   }
+
   return (
     <div className={`fixture-card ${isSaved ? 'bg-green-500/35' : 'bg-transparent'}`}>
       <div className="flex">

@@ -57,6 +57,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
               userId={userId}
               initialPrediction={predictions.find(p => p.fixtureId === item.id)}
               isPast={currentGW < nextGW}
+              testMode={true}
             />
           ))
         )}
