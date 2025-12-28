@@ -19,7 +19,7 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
   const handleUpdateScore = (team: 'home' | 'away', delta: number) => {
     setIsSaved(false); // เมื่อกดปุ่ม ให้ถือว่ายังไม่ได้บันทึกค่าใหม่
     if (team === 'home') {
-      setHomeScore(prev => Math.max(0, prev + delta)); // Math.max ป้องกันแต้มติดลบ
+      setHomeScore(prev => Math.max(0, prev + delta));
     } else {
       setAwayScore(prev => Math.max(0, prev + delta));
     }
