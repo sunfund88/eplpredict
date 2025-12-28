@@ -95,10 +95,10 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
 
       {/* Floating Predict All Button */}
       {!loading && fixtures.length > 0 && (
-        <div className="fixed bottom-6 left-0 right-0 px-4 flex justify-center">
+        <div className="flex justify-center">
           <button 
             onClick={handlePredictAll}
-            className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-10 rounded-full shadow-lg transition-all active:scale-95 w-full max-w-md border-2 border-white/20"
+            className=" w-full bg-pink-600 hover:bg-pink-700 text-white font-black py-3 rounded uppercase transition-colors"
           >
             SAVE ALL PREDICTIONS
           </button>
