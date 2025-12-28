@@ -58,7 +58,7 @@ export default function StatusTab({ nextGW, finishedGW, calculatedGW, isLive, on
             </span>
           ):(
             <span className="bg-grey-500/20 text-grey-400 text-xs px-2 py-1 rounded font-bold border border-grey-500/30 uppercase">
-                PENDING
+                PENDING GW{finishedGW}
             </span>
           )}
         </div>

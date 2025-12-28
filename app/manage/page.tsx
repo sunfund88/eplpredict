@@ -19,37 +19,39 @@ export default function Manage() {
   }
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1 className="text-2xl font-bold mb-4">Welcome 🎉 ADMIN</h1>
-      
-      <div className="flex gap-4 items-center border p-6 rounded-lg bg-gray-50">
-        <div>
-          <label className="block text-sm font-medium mb-1">Gameweek (GW)</label>
-          <input 
-            type="number" 
-            value={gw}
-            onChange={(e) => setGw(e.target.value)}
-            placeholder="e.g. 20"
-            className="border p-2 rounded w-32 text-black"
-          />
-        </div>
+    <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
+      <div className="relative w-full h-[60px] overflow-hidden shadow-md bg-gradient-to-r from-[#f06272] via-[#9d50bb] to-[#6e48aa] flex items-center justify-between px-4">
+        <h1 className="text-2xl font-bold mb-4">Welcome 🎉 ADMIN</h1>
         
-        <button 
-          onClick={handleFetch}
-          disabled={loading}
-          className={`mt-6 px-4 py-2 rounded text-white font-medium ${
-            loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-          }`}
-        >
-          {loading ? 'Updating...' : 'Sync Fixtures from FPL'}
-        </button>
-      </div>
+        <div className="flex gap-4 items-center border p-6 rounded-lg bg-gray-50">
+          <div>
+            <label className="block text-sm font-medium mb-1">Gameweek (GW)</label>
+            <input 
+              type="number" 
+              value={gw}
+              onChange={(e) => setGw(e.target.value)}
+              placeholder="e.g. 20"
+              className="border p-2 rounded w-32 text-black"
+            />
+          </div>
+          
+          <button 
+            onClick={handleFetch}
+            disabled={loading}
+            className={`mt-6 px-4 py-2 rounded text-white font-medium ${
+              loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
+            }`}
+          >
+            {loading ? 'Updating...' : 'Sync Fixtures from FPL'}
+          </button>
+        </div>
 
-      {message && (
-        <p className={`mt-4 p-2 rounded ${message.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-          {message}
-        </p>
-      )}
+        {message && (
+          <p className={`mt-4 p-2 rounded ${message.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+            {message}
+          </p>
+        )}
+      </div>
     </div>
   )
 }
