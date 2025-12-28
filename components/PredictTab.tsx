@@ -8,6 +8,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   const [fixtures, setFixtures] = useState<any[]>([])
   const [predictions, setPredictions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false); // เพิ่ม State สำหรับตอนส่งข้อมูล
   const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number }>>({})
 
   // ฟังก์ชันสำหรับเก็บค่า score จากลูกๆ มาไว้ที่ตัวแม่
@@ -19,22 +20,28 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   }
 
   const handlePredictAll = async () => {
-    setLoading(true)
+    if (Object.keys(localScores).length === 0) {
+      alert("ไม่มีข้อมูลการเปลี่ยนแปลง");
+      return;
+    }
+
+    setIsSubmitting(true); // เริ่ม Animation การส่งข้อมูล
     try {
-      // วนลูปบันทึกเฉพาะที่มีการเปลี่ยนแปลงค่าใน localScores
       const promises = Object.entries(localScores).map(([fixtureId, scores]) => 
         upsertPrediction(userId, parseInt(fixtureId), scores.home, scores.away)
-      )
+      );
       
-      await Promise.all(promises)
-      alert("บันทึกการทายผลทั้งหมดสำเร็จ!")
-      // โหลดข้อมูลใหม่เพื่อให้ UI อัปเดตสถานะ Saved
-      await fetchData(currentGW)
+      await Promise.all(promises);
+      
+      // เมื่อเสร็จแล้ว ให้โหลดข้อมูลใหม่จาก Server เพื่ออัปเดตสถานะปุ่มในแต่ละ Row
+      await fetchData(currentGW); 
+      setLocalScores({}); // ล้างค่าที่ค้างอยู่ใน local state
+      alert("บันทึกการทายผลทั้งหมดสำเร็จ!");
     } catch (error) {
-      console.error(error)
-      alert("เกิดข้อผิดพลาดในการบันทึกทั้งหมด")
+      console.error(error);
+      alert("เกิดข้อผิดพลาดในการบันทึก");
     } finally {
-      setLoading(false)
+      setIsSubmitting(false); // ปิด Animation
     }
   }
 
@@ -66,7 +73,15 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   }
 
   return (
-    <div className="flex flex-col bg-[#38003c] min-h-screen text-white p-4">
+    <div className="relative flex flex-col bg-[#38003c] min-h-screen text-white p-4 pb-24">      
+      {/* --- Full Screen Loading Animation --- */}
+      {isSubmitting && (
+        <div className="fixed inset-0 z-[99] flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-12 h-12 border-4 border-t-pink-500 border-white/20 rounded-full animate-spin mb-4"></div>
+          <p className="text-lg font-bold animate-pulse text-white">กำลังส่งข้อมูล...</p>
+        </div>
+      )}
+
       {/* Header (เหมือนเดิม) */}
       <div className="flex items-center justify-between mb-6">
         <button onClick={() => handleGWChange(currentGW - 1)} className="p-2">❮</button>
@@ -96,6 +111,17 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       {/* Floating Predict All Button */}
       {!loading && fixtures.length > 0 && (
         <div className="flex justify-center">
+          <button 
+            onClick={handlePredictAll}
+            disabled={isSubmitting || Object.keys(localScores).length === 0}
+            className={`${
+              isSubmitting || Object.keys(localScores).length === 0 
+              ? 'w-full bg-gray-600 opacity-50 cursor-not-allowed' 
+              : 'w-full bg-pink-600 hover:bg-pink-700'
+            } text-white font-black py-3 rounded uppercase transition-colors`}
+          >
+            {isSubmitting ? 'SAVING...' : 'SAVE ALL PREDICTIONS'}
+          </button>
           <button 
             onClick={handlePredictAll}
             className=" w-full bg-pink-600 hover:bg-pink-700 text-white font-black py-3 rounded uppercase transition-colors"
