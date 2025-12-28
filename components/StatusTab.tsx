@@ -5,11 +5,12 @@ import { useState, useEffect } from 'react'
 interface StatusTabProps {
   nextGW: number;
   finishedGW: number;
+  calculatedGW: number;
   isLive: boolean;
   onNavigate: () => void;
 }
 
-export default function StatusTab({ nextGW, finishedGW, isLive, onNavigate }: StatusTabProps) {
+export default function StatusTab({ nextGW, finishedGW, calculatedGW, isLive, onNavigate }: StatusTabProps) {
   return (
     <div className="flex flex-col gap-4 p-4 text-white min-h-screen">
       
@@ -48,12 +49,18 @@ export default function StatusTab({ nextGW, finishedGW, isLive, onNavigate }: St
 
       {/* 3. Last Update (GW ที่อัปเดตสกอร์แล้ว) */}
       <div className="bg-black/30 p-4 rounded-lg border border-white/5">
-        <h3 className="text-gray-400 font-bold text-sm uppercase mb-2 text-center">Last Update (GW {finishedGW})</h3>
+        <h3 className="text-gray-400 font-bold text-sm uppercase mb-2 text-center">Last Update (GW {calculatedGW})</h3>
         <div className="flex items-center justify-between bg-black/40 p-3 rounded">
           <span className="text-sm">Score Synchronization</span>
-          <span className="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded font-bold border border-green-500/30 uppercase">
-            Updated
-          </span>
+          {(calculatedGW>=finishedGW) ? (
+            <span className="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded font-bold border border-green-500/30 uppercase">
+                Updated
+            </span>
+          ):(
+            <span className="bg-grey-500/20 text-grey-400 text-xs px-2 py-1 rounded font-bold border border-grey-500/30 uppercase">
+                PENDING
+            </span>
+          )}
         </div>
         <p className="mt-2 text-[10px] text-gray-500 italic text-center">
           *Scores are automatically synced with the Premier League official data.

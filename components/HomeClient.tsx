@@ -1,7 +1,7 @@
 // components/HomeClient.tsx
 'use client'
 import { useState, useEffect } from 'react'
-import { getPredictActiveGW, isLiveGW, getFinishedGW } from '@/app/actions/home'
+import { getPredictActiveGW, isLiveGW, getFinishedGW, getCalculatedGW } from '@/app/actions/home'
 import StatusTab from './StatusTab'
 import PredictTab from './PredictTab'
 
@@ -9,12 +9,14 @@ export default function HomeClient({ userId }: { userId: string }) {
   const [activeTab, setActiveTab] = useState('status_tab')
   const [nextGW, setNextGW] = useState<number>(0)
   const [finishedGW, setFinishedGW] = useState<number>(0)
+  const [calculatedGW, setCalculatedGW] = useState<number>(0)
   const [isLive, setIsLive] = useState<boolean>(false)
 
   useEffect(() => {
     const init = async () => {
       setNextGW(await getPredictActiveGW())
       setFinishedGW(await getFinishedGW())
+      setCalculatedGW(await getCalculatedGW())
       setIsLive(await isLiveGW())
     }
     init()
@@ -46,18 +48,21 @@ export default function HomeClient({ userId }: { userId: string }) {
 
       {/* เนื้อหาที่เปลี่ยนไปตาม Tab พร้อมสีพื้นหลัง */}
       <div className={`flex-1 ${tabConfigs[activeTab].color}`}>
+
+        {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
+        {activeTab === 'status_tab' && nextGW === 0 && (
+          <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
+        )}
         {activeTab === 'status_tab' && (
           <StatusTab nextGW={nextGW} finishedGW={finishedGW} isLive={isLive} onNavigate={() => setActiveTab('fixture_tab')} />
-        )}
-
-        {/* แก้ไขตรงนี้: เพิ่มเช็ค nextGW !== 0 */}
-        {activeTab === 'fixture_tab' && nextGW !== 0 && (
-          <PredictTab userId={userId} nextGW={nextGW}/>
         )}
 
         {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
         {activeTab === 'fixture_tab' && nextGW === 0 && (
           <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
+        )}
+        {activeTab === 'fixture_tab' && nextGW !== 0 && (
+          <PredictTab userId={userId} nextGW={nextGW}/>
         )}
 
         {activeTab === 'leaderboard' && <div>{/* วนลูปโชว์อันดับ */}</div>}
