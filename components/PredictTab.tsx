@@ -4,7 +4,7 @@ import { getFixturesByGW, getUserPredictions } from '@/app/actions/home'
 import PredictionRow from './PredictionRow' // Import row ที่สร้างใหม่
 
 export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:number }) {
-  const [currentGW, setCurrentGW] = useState<number>(0)
+  const [currentGW, setCurrentGW] = useState<number>(nextGW)
   const [minGW, setMinGW] = useState<number>(0)
   const [fixtures, setFixtures] = useState<any[]>([])
   const [predictions, setPredictions] = useState<any[]>([])
