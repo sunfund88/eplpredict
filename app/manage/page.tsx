@@ -20,8 +20,9 @@ export default function Manage() {
 
   return (
     <div className="max-w-md mx-auto bg-green-400 text-black min-h-screen flex flex-col">
-      <h1 className="text-2xl font-bold mb-4">Welcome 🎉 ADMIN</h1>
-      
+      <h1 className="text-2xl font-bold mt-4">Welcome 🎉 ADMIN</h1>
+
+      <h2 className="text-2xl font-bold">Sync Fixtures</h2>
       <div className="flex gap-4 items-center border p-6 rounded-lg bg-gray-50">
         <div>
           <label className="block text-sm font-medium mb-1">Gameweek (GW)</label>
@@ -50,6 +51,8 @@ export default function Manage() {
           {message}
         </p>
       )}
+
+      
     </div>
   )
 }
