@@ -17,30 +17,21 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
 
   const handleUpdateScore = (team: 'home' | 'away', delta: number) => {
     setIsSaved(false);
+    
+    const isHome = team === 'home';
+    const setScore = isHome ? setHomeScore : setAwayScore;
+    const targetValue = isHome ? initialPrediction?.predHome : initialPrediction?.predAway;
 
-    if (team === 'home') {
-      setHomeScore(prev => {
-        // 1. ใช้ตัวแปรรับค่าที่คำนวณเสร็จแล้ว
-        const nextScore = Math.max(0, prev + delta);
-        
-        // 2. เช็คเงื่อนไขจากค่าใหม่ (nextScore) ได้ทันที
-        if (nextScore === initialPrediction.predHome) {
-          setIsSaved(true);
-        }
-        
-        return nextScore;
-      });
-    } else {
-      setAwayScore(prev => {
-        const nextScore = Math.max(0, prev + delta);
-        
-        if (nextScore === initialPrediction.predAway) {
-          setIsSaved(true);
-        }
-        
-        return nextScore;
-      });
-    }
+    setScore(prev => {
+      const nextScore = Math.max(0, prev + delta);
+      
+      // เช็คเงื่อนไขเดียวครอบคลุมทั้งสองฝั่ง
+      if (targetValue !== undefined && nextScore === targetValue) {
+        setIsSaved(true);
+      }
+      
+      return nextScore;
+    });
   };
 
   const handlePredict = async () => {
