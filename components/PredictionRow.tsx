@@ -41,8 +41,8 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
         {/* Home Team Section */}
         <div className="fixture-home">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-sm">{getTeamName(fixture.home)}</span>
-            <img src={getTeamLogo(fixture.home)} alt="home" className="w-8 h-8" />
+            <span className="font-semibold text-md">{getTeamName(fixture.home)}</span>
+            <img src={getTeamLogo(fixture.home)} alt="home" className="w-10 h-10" />
           </div>
           {/* Home Controls */}
           <div className="flex items-center gap-2 mt-2">
@@ -50,7 +50,7 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
               onClick={() => handleUpdateScore('home', -1)}
               className="w-8 h-8 flex items-center justify-center bg-red-500/20 hover:bg-red-500/40 rounded text-xl"
             >-</button>
-            <div className="w-12 bg-[#1b001d] py-1 rounded font-bold text-xl text-center shadow-inner">
+            <div className="w-12 bg-[#1b001d] py-1 rounded font-bold text-2xl text-center shadow-inner">
               {homeScore}
             </div>
             <button 
@@ -60,15 +60,15 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
           </div>
         </div>
 
-        <div className="px-4 text-white font-bold text-xl">
+        <div className="px-4 text-white font-bold text-md">
             VS
         </div>
 
         {/* Away Team Section */}
         <div className="fixture-away">
           <div className="flex items-center gap-2">
-            <img src={getTeamLogo(fixture.away)} alt="away" className="w-8 h-8" />
-            <span className="font-semibold text-sm">{getTeamName(fixture.away)}</span>
+            <img src={getTeamLogo(fixture.away)} alt="away" className="w-10 h-10" />
+            <span className="font-semibold text-md">{getTeamName(fixture.away)}</span>
           </div>
           {/* Away Controls */}
           <div className="flex items-center gap-2 mt-2">
@@ -76,7 +76,7 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
               onClick={() => handleUpdateScore('away', -1)}
               className="w-8 h-8 flex items-center justify-center bg-red-500/20 hover:bg-red-500/40 rounded text-xl"
             >-</button>
-            <div className="w-12 bg-[#1b001d] py-1 rounded font-bold text-xl text-center shadow-inner">
+            <div className="w-12 bg-[#1b001d] py-1 rounded font-bold text-2xl text-center shadow-inner">
               {awayScore}
             </div>
             <button 

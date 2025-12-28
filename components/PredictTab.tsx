@@ -49,7 +49,7 @@ export default function PredictTab({ userId }: { userId: string }) {
       </div>
 
       {/* List */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col">
         {loading ? (
           <p className="text-center py-10 opacity-50">Loading ...</p>
         ) : (
