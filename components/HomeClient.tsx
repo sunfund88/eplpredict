@@ -1,11 +1,21 @@
 // components/HomeClient.tsx
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { getPredictActiveGW } from '@/app/actions/home'
 import ResultTab from './ResultTab'
 import PredictTab from './PredictTab'
 
 export default function HomeClient({ userId }: { userId: string }) {
   const [activeTab, setActiveTab] = useState('predict')
+  const [nextGW, setNextGW] = useState<number>(0)
+
+  useEffect(() => {
+      const init = async () => {
+        const activeGW = await getPredictActiveGW()
+        setNextGW(activeGW)
+      }
+      init()
+    }, [])
 
   // สีของพื้นหลังตามที่วาดไว้ในภาพร่าง
   const tabConfigs: any = {
@@ -37,7 +47,7 @@ export default function HomeClient({ userId }: { userId: string }) {
           <ResultTab />
         )}
         {activeTab === 'predict' && (
-          <PredictTab userId={userId}/>
+          <PredictTab userId={userId} nextGW={nextGW}/>
         )}
         {activeTab === 'leaderboard' && <div>{/* วนลูปโชว์อันดับ */}</div>}
       </div>

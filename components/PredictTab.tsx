@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { getPredictActiveGW, getFixturesByGW, getUserPredictions } from '@/app/actions/home'
+import { getFixturesByGW, getUserPredictions } from '@/app/actions/home'
 import PredictionRow from './PredictionRow' // Import row ที่สร้างใหม่
 
-export default function PredictTab({ userId }: { userId: string }) {
+export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:number }) {
   const [currentGW, setCurrentGW] = useState<number>(0)
   const [minGW, setMinGW] = useState<number>(0)
   const [fixtures, setFixtures] = useState<any[]>([])
@@ -25,10 +25,9 @@ export default function PredictTab({ userId }: { userId: string }) {
 
   useEffect(() => {
     const init = async () => {
-      const activeGW = await getPredictActiveGW()
-      setCurrentGW(activeGW)
-      setMinGW(activeGW)
-      await fetchData(activeGW)
+      setCurrentGW(nextGW)
+      setMinGW(nextGW)
+      await fetchData(nextGW)
     }
     init()
   }, [])
