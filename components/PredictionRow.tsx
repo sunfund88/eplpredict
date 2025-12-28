@@ -41,10 +41,10 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
     try {
       await upsertPrediction(userId, fixture.id, homeScore, awayScore)
       setIsSaved(true)
-      alert("บันทึกการทายผลสำเร็จ!")
+      alert("Data successfully saved!")
     } catch (error) {
       console.error(error)
-      alert("เกิดข้อผิดพลาด")
+      alert("An error occurred during recording.")
     }
   }
 
