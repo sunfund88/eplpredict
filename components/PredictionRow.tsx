@@ -92,13 +92,13 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
         <button 
           onClick={handlePredict}
           disabled={isSaved}
-          className={`${isSaved ? 'bg-gray-600' : 'bg-green-500 hover:bg-green-600'} text-xs px-6 py-2 rounded font-bold transition-colors min-w-[160px]`}
+          className={`${isSaved ? 'bg-gray-600' : 'bg-green-500 hover:bg-green-600'} text-xs px-6 py-2 rounded font-bold transition-colors min-w-[150px]`}
         >
           {isSaved ? 'Saved' : 'Save Prediction'}
         </button>
         <button 
           onClick={() => window.location.href = `/fixture/${fixture.id}`}
-          className="bg-blue-500 hover:bg-blue-600 text-xs px-6 py-2 rounded font-bold min-w-[160px]"
+          className="bg-blue-500 hover:bg-blue-600 text-xs px-6 py-2 rounded font-bold min-w-[150px]"
         >
           Detail
         </button>
