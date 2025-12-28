@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { getTeamLogo, getTeamName } from '@/lib/teams'
+import { getTeamLogo, getTeamName, getTeamShortName } from '@/lib/teams'
 import { upsertPrediction } from '@/app/actions/home'
 
 interface PredictionRowProps {
@@ -41,7 +41,7 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
         {/* Home Team Section */}
         <div className="fixture-home">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-md">{getTeamName(fixture.home)}</span>
+            <span className="font-semibold text-md">{getTeamShortName(fixture.home)}</span>
             <img src={getTeamLogo(fixture.home)} alt="home" className="w-10 h-10" />
           </div>
           {/* Home Controls */}
@@ -68,7 +68,7 @@ export default function PredictionRow({ fixture, initialPrediction, userId }: Pr
         <div className="fixture-away">
           <div className="flex items-center gap-2">
             <img src={getTeamLogo(fixture.away)} alt="away" className="w-10 h-10" />
-            <span className="font-semibold text-md">{getTeamName(fixture.away)}</span>
+            <span className="font-semibold text-md">{getTeamShortName(fixture.away)}</span>
           </div>
           {/* Away Controls */}
           <div className="flex items-center gap-2 mt-2">
