@@ -6,7 +6,7 @@ import ResultTab from './ResultTab'
 import PredictTab from './PredictTab'
 
 export default function HomeClient({ userId }: { userId: string }) {
-  const [activeTab, setActiveTab] = useState('predict')
+  const [activeTab, setActiveTab] = useState('status_tab')
   const [nextGW, setNextGW] = useState<number>(0)
 
   useEffect(() => {
