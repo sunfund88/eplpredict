@@ -24,6 +24,31 @@ export async function getResultActiveGW() {
   return targetGW?.gw || 1 as number // default เป็น GW1 ถ้าไม่เจอข้อมูลเลย
 }
 
+export async function isLiveGW() {
+  let targetGW = await prisma.gameweek.findFirst({
+    where: {
+      isCurrent: true,
+      isFinished: false
+    },
+    select: { id: true, gw: true }
+  })
+
+  if (!targetGW){
+    return true
+  }
+  else return false
+}
+
+export async function getFinishedGW() {
+  let targetGW = await prisma.gameweek.findFirst({
+    where: { isFinished: true },
+    orderBy: { gw: 'desc' }, // เอาค่าที่มากที่สุด
+    select: { id: true, gw: true }
+  })
+
+  return targetGW?.gw || 1 as number
+}
+
 export async function getPredictActiveGW() {
   let targetGW = await prisma.gameweek.findFirst({
     where: {
