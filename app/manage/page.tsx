@@ -19,7 +19,7 @@ export default function Manage() {
   }
 
   return (
-    <div className="max-w-md mx-auto bg-black min-h-screen flex flex-col">
+    <div className="max-w-md mx-auto bg-green-400 text-black min-h-screen flex flex-col">
       <h1 className="text-2xl font-bold mb-4">Welcome 🎉 ADMIN</h1>
       
       <div className="flex gap-4 items-center border p-6 rounded-lg bg-gray-50">
