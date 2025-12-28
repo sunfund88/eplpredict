@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { getFixturesByGW, getUserPredictions } from '@/app/actions/home'
+import { getFixturesByGW, getUserPredictions, upsertPrediction } from '@/app/actions/home'
 import PredictionRow from './PredictionRow' // Import row ที่สร้างใหม่
 
 export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:number }) {
@@ -8,6 +8,35 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   const [fixtures, setFixtures] = useState<any[]>([])
   const [predictions, setPredictions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number }>>({})
+
+  // ฟังก์ชันสำหรับเก็บค่า score จากลูกๆ มาไว้ที่ตัวแม่
+  const updateLocalScore = (fixtureId: string, home: number, away: number) => {
+    setLocalScores(prev => ({
+      ...prev,
+      [fixtureId]: { home, away }
+    }))
+  }
+
+  const handlePredictAll = async () => {
+    setLoading(true)
+    try {
+      // วนลูปบันทึกเฉพาะที่มีการเปลี่ยนแปลงค่าใน localScores
+      const promises = Object.entries(localScores).map(([fixtureId, scores]) => 
+        upsertPrediction(userId, parseInt(fixtureId), scores.home, scores.away)
+      )
+      
+      await Promise.all(promises)
+      alert("บันทึกการทายผลทั้งหมดสำเร็จ!")
+      // โหลดข้อมูลใหม่เพื่อให้ UI อัปเดตสถานะ Saved
+      await fetchData(currentGW)
+    } catch (error) {
+      console.error(error)
+      alert("เกิดข้อผิดพลาดในการบันทึกทั้งหมด")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const fetchData = async (gw: number) => {
     setLoading(true)
@@ -57,11 +86,24 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
               userId={userId}
               initialPrediction={predictions.find(p => p.fixtureId === item.id)}
               isPast={currentGW < nextGW}
-              testMode={true}
+              testMode={true}// ส่งฟังก์ชันไปดึงค่า score
+              onScoreChange={(home, away) => updateLocalScore(item.id, home, away)}
             />
           ))
         )}
       </div>
+
+      {/* Floating Predict All Button */}
+      {!loading && fixtures.length > 0 && (
+        <div className="fixed bottom-6 left-0 right-0 px-4 flex justify-center">
+          <button 
+            onClick={handlePredictAll}
+            className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-10 rounded-full shadow-lg transition-all active:scale-95 w-full max-w-md border-2 border-white/20"
+          >
+            SAVE ALL PREDICTIONS
+          </button>
+        </div>
+      )}
     </div>
   )
 }

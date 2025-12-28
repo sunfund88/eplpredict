@@ -9,9 +9,10 @@ interface PredictionRowProps {
   userId: string;
   isPast: boolean
   testMode: boolean
+  onScoreChange?: (home: number, away: number) => void;
 }
 
-export default function PredictionRow({ fixture, initialPrediction, userId, isPast, testMode }: PredictionRowProps) {
+export default function PredictionRow({ fixture, initialPrediction, userId, isPast, testMode, onScoreChange }: PredictionRowProps) {
   const [homeScore, setHomeScore] = useState<number>(initialPrediction?.predHome ?? 0)
   const [awayScore, setAwayScore] = useState<number>(initialPrediction?.predAway ?? 0)
   const [isSaved, setIsSaved] = useState(!!initialPrediction)
@@ -19,20 +20,21 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
   const handleUpdateScore = (team: 'home' | 'away', delta: number) => {
     setIsSaved(false);
     
-    const isHome = team === 'home';
-    const setScore = isHome ? setHomeScore : setAwayScore;
-    const targetValue = isHome ? initialPrediction?.predHome : initialPrediction?.predAway;
-
-    setScore(prev => {
-      const nextScore = Math.max(0, prev + delta);
-      
-      // เช็คเงื่อนไขเดียวครอบคลุมทั้งสองฝั่ง
-      if (targetValue !== undefined && nextScore === targetValue) {
+    if (team === 'home') {
+      const nextHome = Math.max(0, homeScore + delta);
+      setHomeScore(nextHome);
+      onScoreChange?.(nextHome, awayScore); // ส่งค่าใหม่ไปที่ตัวแม่
+      if (initialPrediction && nextHome === initialPrediction.predHome && awayScore === initialPrediction.predAway) {
         setIsSaved(true);
       }
-      
-      return nextScore;
-    });
+    } else {
+      const nextAway = Math.max(0, awayScore + delta);
+      setAwayScore(nextAway);
+      onScoreChange?.(homeScore, nextAway); // ส่งค่าใหม่ไปที่ตัวแม่
+      if (initialPrediction && homeScore === initialPrediction.predHome && nextAway === initialPrediction.predAway) {
+        setIsSaved(true);
+      }
+    }
   };
 
   const handlePredict = async () => {
