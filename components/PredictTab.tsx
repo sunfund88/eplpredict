@@ -122,12 +122,6 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
           >
             {isSubmitting ? 'SAVING...' : 'SAVE ALL PREDICTIONS'}
           </button>
-          <button 
-            onClick={handlePredictAll}
-            className=" w-full bg-pink-600 hover:bg-pink-700 text-white font-black py-3 rounded uppercase transition-colors"
-          >
-            SAVE ALL PREDICTIONS
-          </button>
         </div>
       )}
     </div>
