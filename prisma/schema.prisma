@@ -46,6 +46,7 @@ model Prediction {
   id         String   @id @default(uuid())
   userId     String
   fixtureId  Int
+  gw          Int
   predHome   Int
   predAway   Int
   score      Int      @default(0)
