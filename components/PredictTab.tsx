@@ -21,7 +21,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
 
   const handlePredictAll = async () => {
     if (Object.keys(localScores).length === 0) {
-      alert("ไม่มีข้อมูลการเปลี่ยนแปลง");
+      alert("No data changes.");
       return;
     }
 
@@ -36,10 +36,10 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       // เมื่อเสร็จแล้ว ให้โหลดข้อมูลใหม่จาก Server เพื่ออัปเดตสถานะปุ่มในแต่ละ Row
       await fetchData(currentGW); 
       setLocalScores({}); // ล้างค่าที่ค้างอยู่ใน local state
-      alert("บันทึกการทายผลทั้งหมดสำเร็จ!");
+      alert("All data successfully saved!");
     } catch (error) {
       console.error(error);
-      alert("เกิดข้อผิดพลาดในการบันทึก");
+      alert("An error occurred during recording.");
     } finally {
       setIsSubmitting(false); // ปิด Animation
     }
@@ -77,8 +77,8 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       {/* --- Full Screen Loading Animation --- */}
       {isSubmitting && (
         <div className="fixed inset-0 z-[99] flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-12 h-12 border-4 border-t-pink-500 border-white/20 rounded-full animate-spin mb-4"></div>
-          <p className="text-lg font-bold animate-pulse text-white">กำลังส่งข้อมูล...</p>
+          <div className="w-12 h-12 border-4 border-t-lime-400 border-white/20 rounded-full animate-spin mb-4"></div>
+          <p className="text-lg font-bold animate-pulse text-white">Sending data to Database...</p>
         </div>
       )}
 
@@ -117,8 +117,8 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
             className={`${
               isSubmitting || Object.keys(localScores).length === 0 
               ? 'w-full bg-gray-600 opacity-50 cursor-not-allowed' 
-              : 'w-full bg-pink-600 hover:bg-pink-700'
-            } text-white font-black py-3 rounded uppercase transition-colors`}
+              : 'w-full bg-lime-400 hover:bg-lime-500'
+            } text-black font-black py-3 rounded uppercase transition-colors`}
           >
             {isSubmitting ? 'SAVING...' : 'SAVE ALL PREDICTIONS'}
           </button>
