@@ -49,6 +49,8 @@ model Prediction {
   predHome   Int
   predAway   Int
   score      Int      @default(0)
+  multiplier  Int          @default(1)
+  createdAt   DateTime @default(now())
 
   user     User     @relation(fields: [userId], references: [id])
   fixture  Fixture @relation(fields: [fixtureId], references: [id])
