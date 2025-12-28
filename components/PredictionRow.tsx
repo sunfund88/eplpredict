@@ -22,12 +22,12 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
     setIsSaved(false); // เมื่อกดปุ่ม ให้ถือว่ายังไม่ได้บันทึกค่าใหม่
     if (team === 'home') {
       setHomeScore(prev => Math.max(0, prev + delta));
-      if(homeScore===initHomeScore){
+      if(homeScore===initialPrediction.predHome){
         setIsSaved(true)
       }
     } else {
       setAwayScore(prev => Math.max(0, prev + delta));
-      if(awayScore===initAwayScore){
+      if(awayScore===initialPrediction.predAway){
         setIsSaved(true)
       }      
     }
