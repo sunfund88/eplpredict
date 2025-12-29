@@ -42,6 +42,21 @@ export async function fetchAndSaveFixtures(gw: number) {
     })
 
     await Promise.all(promises)
+
+    // 2. ตรวจสอบว่าใน Gameweek นี้แข่งจบครบทุกนัดหรือยัง
+    const allFinished = data.every((item: any) => item.finished === true)
+
+    if (allFinished && data.length > 0) {
+      await prisma.gameweek.update({
+        where: { gw: gw },
+        data: { isFinished: true }
+      })
+      return { 
+        success: true, 
+        message: `Updated GW ${gw} and marked Gameweek as FINISHED!` 
+      }
+    }
+    
     return { success: true, message: `Updated GW ${gw} with stats successfully!` }
   } catch (error) {
     return { success: false, message: "Error updating fixtures" }
