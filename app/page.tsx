@@ -30,14 +30,16 @@ export default async function Home() {
   // 2. ถ้าไม่ได้ Login ให้แสดงหน้า Login (ตามภาพร่างหน้า Login)
   if (!user) {
     return (
-      <main className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
-        <a
-          href="/api/auth/line/"
-          className="bg-[#06C755] w-full hover:bg-green-600 text-white py-3 rounded transition-colors shadow-lg"
-        >
-          Line Login
-        </a>
-      </main>
+      <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
+        <div className="flex items-center justify-center h-screen">
+          <a
+            href="/api/auth/line/"
+            className="bg-[#06C755] text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg"
+          >
+            Line Login
+          </a>
+        </div>
+      </div>
     )
   }
 
