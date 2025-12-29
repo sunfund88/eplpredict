@@ -49,9 +49,6 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
 
   const fetchData = async (gw: number) => {
     setLoading(true)
-    
-    const gwInfo = await getGameweekInfo(gw); // ฟังก์ชันดึงข้อมูล GW
-    if (gwInfo) setDeadline(gwInfo.gwDeadline.toISOString());
 
     const data = await getFixturesByGW(gw)
     if (data && data.fixtures) {
@@ -62,6 +59,9 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       setPredictions(userPreds)
     }
     setLoading(false)
+    
+    const gwInfo = await getGameweekInfo(gw); // ฟังก์ชันดึงข้อมูล GW
+    if (gwInfo) setDeadline(gwInfo.gwDeadline.toISOString());
   }
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       {/* ส่วนหัวแสดงผล Countdown */}
       {deadline && currentGW === nextGW && (
         <div className="mb-4">
-          <CountdownTimer key={deadline} deadline={deadline} />
+          <CountdownTimer key={`${currentGW}-${deadline}`} deadline={deadline} />
         </div>
       )}
 
