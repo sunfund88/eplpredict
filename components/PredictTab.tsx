@@ -16,7 +16,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   const [isSubmitting, setIsSubmitting] = useState(false); // เพิ่ม State สำหรับตอนส่งข้อมูล
   const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number}>>({})
   const [deadline, setDeadline] = useState<string | null>(null)
-  const [isAlreadyExpired, setIsAlreadyExpired] = useState(false)
+  const [isPastDeadline, setIsPastDeadline] = useState(false)
   // ฟังก์ชันสำหรับเก็บค่า score จากลูกๆ มาไว้ที่ตัวแม่
   const updateLocalScore = (fixtureId: string, home: number, away: number) => {
     setLocalScores(prev => ({
@@ -69,7 +69,8 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       const dl = gwInfo.gwDeadline.toISOString()
       setDeadline(dl)
       // เช็คทันทีว่าหมดเวลาหรือยัง
-      setIsAlreadyExpired(checkIsExpired(dl))
+      const isExpired = new Date().getTime() > new Date(dl).getTime()
+      setIsPastDeadline(isExpired)
     }
   }
 
@@ -105,14 +106,21 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
         <button onClick={() => handleGWChange(currentGW + 1)} className="p-2">❯</button>
       </div>
 
-      {/* ส่วนหัวแสดงผล Countdown */}
-      {deadline && currentGW === nextGW && (
-        <div className="mb-4">
+      {/* ส่วนนับเวลา: จะแสดงเฉพาะเมื่อยังไม่หมดเวลาเท่านั้น */}
+      {deadline && currentGW === nextGW && !isPastDeadline && (
+        <div className="mb-6">
           <CountdownTimer 
-          key={deadline} 
-          deadline={deadline}
-          initialIsExpired={isAlreadyExpired} // ส่งค่าที่เช็คแล้วลงไป
-        />
+            key={deadline} 
+            deadline={deadline} 
+            onExpire={() => setIsPastDeadline(true)} // เมื่อนับจนครบ ให้สั่งล็อกหน้าจอทันที
+          />
+        </div>
+      )}
+
+      {/* สไตล์ตอนหมดเวลา: แสดงแค่แถบสีแดงเรียบๆ หรือไม่ต้องแสดงเลยก็ได้ */}
+      {isPastDeadline && currentGW === nextGW && (
+        <div className="mb-6 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-center text-red-400 font-bold uppercase tracking-widest">
+          Submissions Closed
         </div>
       )}
 
@@ -127,7 +135,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
               fixture={item} 
               userId={userId}
               initialPrediction={predictions.find(p => p.fixtureId === item.id)}
-              isPast={currentGW < nextGW}
+              isPast={isPastDeadline || currentGW < nextGW}
               testMode={true}// ส่งฟังก์ชันไปดึงค่า score
               onScoreChange={(home, away) => updateLocalScore(item.id, home, away)}
             />
@@ -140,7 +148,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
         <div className="flex justify-center">
           <button 
             onClick={handlePredictAll}
-            disabled={isSubmitting || Object.keys(localScores).length === 0}
+            disabled={isPastDeadline || isSubmitting || Object.keys(localScores).length === 0}
             className={`${
               isSubmitting || Object.keys(localScores).length === 0 
               ? 'w-full bg-gray-600 opacity-50 cursor-not-allowed' 
