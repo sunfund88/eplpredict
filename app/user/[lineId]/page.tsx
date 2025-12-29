@@ -59,6 +59,11 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
         <div className="w-32 h-32 rounded-full border-8 border-[#38003c] overflow-hidden bg-slate-800 shadow-2xl">
           <img src={user.image || "/default-avatar.png"} className="w-full h-full object-cover" />
         </div>
+        
+        {/* ชื่อ */}
+        <h1 className="text-3xl font-black italic uppercase text-white leading-none">
+          {user.name}
+        </h1>
         {/* Total Points */}
         <div className="mt-3 inline-block px-4 py-1 bg-[#00ff85] text-[#38003c] rounded-full font-bold text-sm uppercase">
           {user.score.toLocaleString()} Total Points
@@ -66,9 +71,6 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
 
         {/* ชื่อและปุ่ม Logout */}
         <div className="mt-4 flex flex-col items-center gap-2">
-          <h1 className="text-3xl font-black italic uppercase text-white leading-none">
-            {user.name}
-          </h1>
           
           {/* ปุ่ม Logout สีแดงตามที่คุณต้องการ */}
           {isOwnProfile && (
