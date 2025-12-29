@@ -50,7 +50,7 @@ export default async function Home() {
 
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
-      <div className="relative w-full h-[60px] overflow-hidden shadow-md bg-gradient-to-r from-[#f06272] via-[#9d50bb] to-[#6e48aa] flex items-center justify-between px-4">
+      <div className="relative w-full h-[60px] overflow-hidden shadow-md bg-gradient-to-r from-[#f06272] via-[#9d50bb] to-[#6e48aa] flex items-center justify-between px-3">
       
         {/* 1. ส่วน Logo (EPL Predict) - อยู่ฝั่งซ้าย */}
         <div className="flex flex-col justify-center select-none">
@@ -63,7 +63,7 @@ export default async function Home() {
         <div className="flex items-center gap-3">
           {/* ชื่อและคะแนน */}
           <div className="flex flex-col items-end text-white drop-shadow-sm">
-            <span className="text-sm font-bold leading-none uppercase italic">
+            <span className="text-sm font-bold leading-none">
               {user.name}
             </span>
             <span className="text-xs font-medium opacity-90">
