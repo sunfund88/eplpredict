@@ -25,7 +25,7 @@ serve(async (req) => {
 
     const payload = events.map((ev: any) => ({
       gw: ev.id,
-      gwDeadline: ev.deadline_time,
+      gwDeadline: new Date(ev.deadline_time).toISOString(),
       isCurrent: ev.is_current,
       isNext: ev.is_next,
       isFinished: ev.finished,
@@ -42,7 +42,9 @@ serve(async (req) => {
       { headers: { "Content-Type": "application/json" } }
     );
   } catch (err) {
-    console.error("Edge error:", err);
-    return new Response("Internal Error", { status: 500 });
-  }
+    return new Response(JSON.stringify({ error: err.message }), { 
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
+}
 });
