@@ -7,6 +7,18 @@ export default function CountdownTimer({ deadline }: { deadline: string }) {
   const [isExpired, setIsExpired] = useState(false)
 
   useEffect(() => {
+    const checkInitialStatus = () => {
+      const now = new Date().getTime()
+      const target = new Date(deadline).getTime()
+      if (target - now > 0) {
+        setIsExpired(false) // กลับมาเป็นสีเขียวถ้ายังไม่หมดเวลา
+      } else {
+        setIsExpired(true)
+        setTimeLeft("DEADLINE PASSED")
+      }
+    }
+    checkInitialStatus()
+    
     const timer = setInterval(() => {
       const now = new Date().getTime()
       const target = new Date(deadline).getTime()

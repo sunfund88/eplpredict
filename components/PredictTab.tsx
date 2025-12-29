@@ -88,19 +88,20 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
         </div>
       )}
 
-      {/* ส่วนหัวแสดงผล Countdown */}
-      {deadline && currentGW === nextGW && (
-        <div className="mb-6">
-          <CountdownTimer deadline={deadline} />
-        </div>
-      )}
 
       {/* Header (เหมือนเดิม) */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <button onClick={() => handleGWChange(currentGW - 1)} className="p-2">❮</button>
         <h2 className="text-xl font-bold">Gameweek {currentGW}</h2>
         <button onClick={() => handleGWChange(currentGW + 1)} className="p-2">❯</button>
       </div>
+
+      {/* ส่วนหัวแสดงผล Countdown */}
+      {deadline && currentGW === nextGW && (
+        <div className="mb-4">
+          <CountdownTimer deadline={deadline} />
+        </div>
+      )}
 
       {/* List */}
       <div className="flex flex-col">
