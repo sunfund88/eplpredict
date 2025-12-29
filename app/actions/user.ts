@@ -8,11 +8,13 @@ export async function getUserDetail(lineId: string) {
       where: { 
         lineId: lineId 
       },
-      // เพิ่มส่วนนี้เพื่อดึงประวัติการทายผลมาโชว์ในหน้า Page
       include: {
         predictions: {
           orderBy: {
             gw: 'desc'
+          },
+          include: {
+            fixture: true 
           }
         }
       }

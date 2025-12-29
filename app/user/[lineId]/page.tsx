@@ -7,6 +7,7 @@ import Link from "next/link"
 import { cookies } from "next/headers"
 import { jwtVerify } from "jose"
 import { ArrowLeft, LogOut } from "lucide-react"
+import { getTeamLogo, getTeamName, getTeamShortName } from '@/lib/teams'
 
 // ต้องใช้ Secret เดียวกับที่ใช้ใน Middleware
 const secret = new TextEncoder().encode(process.env.JWT_SECRET)
@@ -95,36 +96,78 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
               user.predictions.map((pred: any) => (
                 <div 
                   key={pred.id} 
-                  className="bg-white/5 border border-white/10 p-4 rounded-3xl flex items-center justify-between hover:bg-white/10 transition-colors"
+                  className="bg-white/5 border border-white/10 p-4 rounded-3xl flex flex-col gap-3 hover:bg-white/10 transition-all"
                 >
-                  <div className="flex flex-col">
+                  {/* แถวบน: Gameweek และสถานะ */}
+                  <div className="flex justify-between items-center px-1">
                     <span className="text-[10px] font-bold text-[#00ff85] uppercase tracking-widest">
                       Gameweek {pred.gw}
                     </span>
-                    <span className="text-sm opacity-40 font-mono">
-                      Fixture: {pred.fixtureId}
-                    </span>
+                    {pred.fixture?.status === 'FINISHED' && (
+                      <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full opacity-50">
+                        Full Time
+                      </span>
+                    )}
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className="bg-white/10 px-4 py-2 rounded-xl text-center min-w-[80px]">
-                      <p className="text-[10px] opacity-50 mb-1 uppercase font-bold">Pred.</p>
-                      <p className="text-xl font-black font-mono leading-none">
+                  {/* แถวกลาง: ผลการแข่งขันจริง (แทน Fixture IDเดิม) */}
+                  <div className="flex items-center justify-between bg-black/20 py-3 px-4 rounded-2xl">
+                    {/* ทีมเหย้า */}
+                    <div className="flex items-center gap-2 flex-1">
+                      <span className="text-xs font-bold uppercase tracking-tighter w-10 text-right">
+                        {getTeamShortName(pred.fixture?.homeTeam)}
+                      </span>
+                      <img 
+                        src={getTeamLogo(pred.fixture?.homeTeam)} 
+                        alt="home" 
+                        className="w-6 h-6 object-contain"
+                      />
+                    </div>
+
+                    {/* สกอร์จริง */}
+                    <div className="flex items-center justify-center gap-1 px-3">
+                      <span className="text-lg font-black font-mono">
+                        {pred.fixture?.homeScore ?? '-'}
+                      </span>
+                      <span className="opacity-30">-</span>
+                      <span className="text-lg font-black font-mono">
+                        {pred.fixture?.awayScore ?? '-'}
+                      </span>
+                    </div>
+
+                    {/* ทีมเยือน */}
+                    <div className="flex items-center gap-2 flex-1 justify-end">
+                      <img 
+                        src={getTeamLogo(pred.fixture?.awayTeam)} 
+                        alt="away" 
+                        className="w-6 h-6 object-contain"
+                      />
+                      <span className="text-xs font-bold uppercase tracking-tighter w-10 text-left">
+                        {getTeamShortName(pred.fixture?.awayTeam)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* แถวล่าง: ผลการทายและคะแนนที่ได้รับ */}
+                  <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] opacity-50 uppercase font-bold">Your Pred:</span>
+                      <span className="text-sm font-black font-mono text-white bg-white/10 px-2 py-0.5 rounded-lg">
                         {pred.predHome}-{pred.predAway}
-                      </p>
+                      </span>
                     </div>
                     
-                    <div className="text-center min-w-[50px]">
-                      <p className="text-[10px] opacity-50 mb-1 uppercase font-bold">Pts</p>
-                      <p className="text-xl font-black text-[#00ff85] leading-none">
+                    <div className="flex items-center gap-1">
+                      <span className="text-[10px] opacity-50 uppercase font-bold">Pts:</span>
+                      <span className={`text-lg font-black ${pred.score > 0 ? 'text-[#00ff85]' : 'text-white/30'}`}>
                         +{pred.score}
-                      </p>
+                      </span>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-20 opacity-30 italic">
+              <div className="text-center py-20 opacity-30 italic text-sm">
                 No history available.
               </div>
             )}
