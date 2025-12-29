@@ -4,6 +4,10 @@ import { getFixturesByGW, getUserPredictions, upsertPrediction, getGameweekInfo 
 import PredictionRow from './PredictionRow' // Import row ที่สร้างใหม่
 import CountdownTimer from './CountdownTimer'
 
+const checkIsExpired = (deadlineStr: string) => {
+  return new Date().getTime() > new Date(deadlineStr).getTime()
+}
+
 export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:number }) {
   const [currentGW, setCurrentGW] = useState<number>(nextGW)
   const [fixtures, setFixtures] = useState<any[]>([])
@@ -12,7 +16,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   const [isSubmitting, setIsSubmitting] = useState(false); // เพิ่ม State สำหรับตอนส่งข้อมูล
   const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number}>>({})
   const [deadline, setDeadline] = useState<string | null>(null)
-
+  const [isAlreadyExpired, setIsAlreadyExpired] = useState(false)
   // ฟังก์ชันสำหรับเก็บค่า score จากลูกๆ มาไว้ที่ตัวแม่
   const updateLocalScore = (fixtureId: string, home: number, away: number) => {
     setLocalScores(prev => ({
@@ -60,8 +64,13 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
     }
     setLoading(false)
     
-    const gwInfo = await getGameweekInfo(gw); // ฟังก์ชันดึงข้อมูล GW
-    if (gwInfo) setDeadline(gwInfo.gwDeadline.toISOString());
+    const gwInfo = await getGameweekInfo(gw); 
+    if (gwInfo) {
+      const dl = gwInfo.gwDeadline.toISOString()
+      setDeadline(dl)
+      // เช็คทันทีว่าหมดเวลาหรือยัง
+      setIsAlreadyExpired(checkIsExpired(dl))
+    }
   }
 
   useEffect(() => {
@@ -99,7 +108,11 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       {/* ส่วนหัวแสดงผล Countdown */}
       {deadline && currentGW === nextGW && (
         <div className="mb-4">
-          <CountdownTimer key={`${currentGW}-${deadline}`} deadline={deadline} />
+          <CountdownTimer 
+          key={deadline} 
+          deadline={deadline}
+          initialIsExpired={isAlreadyExpired} // ส่งค่าที่เช็คแล้วลงไป
+        />
         </div>
       )}
 
