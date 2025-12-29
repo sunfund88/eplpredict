@@ -99,7 +99,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       {/* ส่วนหัวแสดงผล Countdown */}
       {deadline && currentGW === nextGW && (
         <div className="mb-4">
-          <CountdownTimer deadline={deadline} />
+          <CountdownTimer key={deadline} deadline={deadline} />
         </div>
       )}
 
