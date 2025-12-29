@@ -116,6 +116,13 @@ export async function upsertPrediction(userId: string, fixtureId: number, gw: nu
   })
 }
 
+export async function getGameweekInfo(gw: number) {
+  return await prisma.gameweek.findUnique({
+    where: { gw },
+    select: { gwDeadline: true }
+  });
+}
+
 export async function getLeaderboard() {
   try {
     const users = await prisma.user.findMany({

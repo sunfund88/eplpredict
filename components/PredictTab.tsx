@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { getFixturesByGW, getUserPredictions, upsertPrediction } from '@/app/actions/home'
+import { getFixturesByGW, getUserPredictions, upsertPrediction, getGameweekInfo } from '@/app/actions/home'
 import PredictionRow from './PredictionRow' // Import row ที่สร้างใหม่
 
 export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:number }) {
@@ -10,6 +10,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false); // เพิ่ม State สำหรับตอนส่งข้อมูล
   const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number}>>({})
+  const [deadline, setDeadline] = useState<string | null>(null)
 
   // ฟังก์ชันสำหรับเก็บค่า score จากลูกๆ มาไว้ที่ตัวแม่
   const updateLocalScore = (fixtureId: string, home: number, away: number) => {
@@ -47,6 +48,10 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
 
   const fetchData = async (gw: number) => {
     setLoading(true)
+    
+    const gwInfo = await getGameweekInfo(gw); // ฟังก์ชันดึงข้อมูล GW
+    if (gwInfo) setDeadline(gwInfo.gwDeadline.toISOString());
+
     const data = await getFixturesByGW(gw)
     if (data && data.fixtures) {
       setFixtures(data.fixtures)
@@ -79,6 +84,13 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
         <div className="fixed inset-0 z-[99] flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="w-12 h-12 border-4 border-t-lime-400 border-white/20 rounded-full animate-spin mb-4"></div>
           <p className="text-lg font-bold animate-pulse text-white">Sending data to Database...</p>
+        </div>
+      )}
+      
+      {/* ส่วนหัวแสดงผล Countdown */}
+      {deadline && currentGW === nextGW && (
+        <div className="mb-6">
+          <CountdownTimer deadline={deadline} />
         </div>
       )}
 
