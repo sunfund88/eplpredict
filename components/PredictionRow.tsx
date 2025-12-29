@@ -39,7 +39,7 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
 
   const handlePredict = async () => {
     try {
-      await upsertPrediction(userId, fixture.id, homeScore, awayScore)
+      await upsertPrediction(userId, fixture.id, fixture.gw, homeScore, awayScore)
       setIsSaved(true)
       alert("Data successfully saved!")
     } catch (error) {

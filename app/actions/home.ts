@@ -94,7 +94,7 @@ export async function getUserPredictions(userId: string, fixtureIds: number[]) {
   })
 }
 
-export async function upsertPrediction(userId: string, fixtureId: number, homeScore: number, awayScore: number) {
+export async function upsertPrediction(userId: string, fixtureId: number, gw: number, homeScore: number, awayScore: number) {
   return await prisma.prediction.upsert({
     where: {
       userId_fixtureId: {
@@ -109,6 +109,7 @@ export async function upsertPrediction(userId: string, fixtureId: number, homeSc
     create: {
       userId: userId,
       fixtureId: fixtureId,
+      gw: gw,
       predHome: homeScore,
       predAway: awayScore,
     }

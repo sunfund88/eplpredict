@@ -9,7 +9,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   const [predictions, setPredictions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false); // เพิ่ม State สำหรับตอนส่งข้อมูล
-  const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number }>>({})
+  const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number}>>({})
 
   // ฟังก์ชันสำหรับเก็บค่า score จากลูกๆ มาไว้ที่ตัวแม่
   const updateLocalScore = (fixtureId: string, home: number, away: number) => {
@@ -28,7 +28,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
     setIsSubmitting(true); // เริ่ม Animation การส่งข้อมูล
     try {
       const promises = Object.entries(localScores).map(([fixtureId, scores]) => 
-        upsertPrediction(userId, parseInt(fixtureId), scores.home, scores.away)
+        upsertPrediction(userId, parseInt(fixtureId), currentGW, scores.home, scores.away)
       );
       
       await Promise.all(promises);
