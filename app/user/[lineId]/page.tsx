@@ -28,12 +28,9 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
     try {
       const { payload } = await jwtVerify(token, secret)
 
-      if (payload.lineId === lineId || payload.sub === lineId) {        
+      if (payload.userId === user.id) {        
         isOwnProfile = true
       }
-      console.log("ID from URL:", lineId);
-      console.log("ID from Token:", payload.lineId);
-      console.log("ID from Token sub:", payload.sub);
     } catch (err) {
       console.error("JWT Verify Error in Page:", err)
     }
