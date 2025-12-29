@@ -33,7 +33,7 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
           </div>
         </div>
 
-        {/* Prediction History List */}
+        {/* Prediction History List
         <div className="mt-10 max-w-2xl mx-auto pb-20">
           <h2 className="text-xl font-bold mb-6 border-b border-white/10 pb-2">
             PREDICTION HISTORY
@@ -78,7 +78,8 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
               </div>
             )}
           </div>
-        </div>
+        </div> 
+        */}
       </div>
     </div>
   )

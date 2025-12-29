@@ -7,14 +7,6 @@ export async function getUserDetail(lineId: string) {
     const user = await prisma.user.findUnique({
       where: { 
         lineId: lineId 
-      },
-      include: {
-        predictions: {
-          orderBy: {
-            gw: 'desc'
-          },
-          take: 30
-        }
       }
     });
     return user;
