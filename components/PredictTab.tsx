@@ -137,7 +137,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       </div>
 
       {/* Floating Predict All Button */}
-      {!loading && fixtures.length > 0 && (
+      {!loading && fixtures.length > 0 && currentGW >= nextGW && (
         <div className="flex justify-center">
           <button 
             onClick={handlePredictAll}
