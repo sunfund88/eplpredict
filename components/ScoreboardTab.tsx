@@ -22,14 +22,14 @@ export default function ScoreboardTab() {
 
   return (
     <div className="bg-[#38003c] min-h-screen p-4 text-white">
-      <h2 className="text-2xl font-black mb-6 text-center text-lime-400 uppercase italic">
-        Leaderboard
+      <h2 className="text-2xl font-black mb-6 text-center text-lime-400 uppercase">
+        Scoreboard
       </h2>
 
-      <div className="bg-white/5 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+      <div className="bg-white/5 rounded-xl overflow-hidden border border-white/10 shadow-2xl">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-white/10 text-lime-400 text-xs uppercase tracking-widest">
+            <tr className="bg-white/10 text-white text-xs uppercase tracking-widest">
               <th className="px-4 py-4 font-bold w-16 text-center">Rank</th>
               <th className="px-4 py-4 font-bold">Player</th>
               <th className="px-4 py-4 font-bold text-right">Points</th>
@@ -51,7 +51,7 @@ export default function ScoreboardTab() {
                 {/* รูปและชื่อ User */}
                 <td className="px-4 py-5">
                   <div className="flex items-center gap-3">
-                    <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 bg-slate-800">
+                    <div className="relative w-10 h-10 rounded-xl overflow-hidden border-2 border-white/20 bg-slate-800">
                       {user.image ? (
                         <img 
                           src={user.image} 
@@ -71,7 +71,7 @@ export default function ScoreboardTab() {
                 </td>
 
                 {/* คะแนน */}
-                <td className="px-4 py-5 text-right font-black text-xl text-lime-400">
+                <td className="px-4 py-5 text-right font-black text-xl text-white">
                   {user.score.toLocaleString()}
                 </td>
               </tr>
