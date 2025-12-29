@@ -25,9 +25,9 @@ export default function HomeClient({ userId }: { userId: string }) {
 
   // สีของพื้นหลังตามที่วาดไว้ในภาพร่าง
   const tabConfigs: any = {
-    status_tab: { color: 'bg-[#38003c]', label: 'Status' },
-    fixture_tab: { color: 'bg-[#38003c]', label: 'Fixture' },
-    leaderboard: { color: 'bg-[#38003c]', label: 'Scoreboard' }
+    status_tab: { color: 'bg-[#020617]', label: 'Status' },
+    fixture_tab: { color: 'bg-[#020617]', label: 'Fixture' },
+    leaderboard: { color: 'bg-[#020617]', label: 'Scoreboard' }
   }
 
   return (
