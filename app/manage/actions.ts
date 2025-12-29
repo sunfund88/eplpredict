@@ -136,3 +136,34 @@ export async function calculatePoints(gw: number) {
     return { success: false, message: "Error calculating points." };
   }
 }
+
+export async function updateUserTotalScores() {
+  try {
+    // 1. ดึง User ทั้งหมด
+    const users = await prisma.user.findMany();
+
+    const updatePromises = users.map(async (user) => {
+      // 2. รวมคะแนนจากตาราง Prediction ของ user คนนี้
+      const aggregate = await prisma.prediction.aggregate({
+        where: { userId: user.id },
+        _sum: {
+          score: true
+        }
+      });
+
+      const totalScore = aggregate._sum.score || 0;
+
+      // 3. อัปเดตคะแนนกลับไปที่ตาราง User
+      return prisma.user.update({
+        where: { id: user.id },
+        data: { score: totalScore }
+      });
+    });
+
+    await Promise.all(updatePromises);
+    return { success: true, message: "Updated all users' total scores successfully!" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Error updating total scores." };
+  }
+}

@@ -1,7 +1,7 @@
 // app/manage/page.tsx
 'use client'
 import { useState } from 'react'
-import { fetchAndSaveFixtures, calculatePoints } from './actions'
+import { fetchAndSaveFixtures, calculatePoints, updateUserTotalScores } from './actions'
 
 export default function Manage() {
   const [syncGw, setSyncGw] = useState('') // สำหรับดึงข้อมูล
@@ -66,7 +66,7 @@ export default function Manage() {
         <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <span className="w-2 h-6 bg-lime-500 rounded-full"></span>
-            2. Calculate User Points
+            2. Calculate Points in Prediction Table
           </h2>
           <div className="flex gap-3">
             <input 
@@ -84,6 +84,29 @@ export default function Manage() {
               {loading ? 'CALCULATING...' : 'CALCULATE NOW'}
             </button>
           </div>
+        </div>
+
+        {/* 3. ส่วนสรุปคะแนนรวม User */}
+        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <span className="w-2 h-6 bg-yellow-500 rounded-full"></span>
+            3. Update Global Leaderboard
+          </h2>
+          <p className="text-sm text-slate-400 mb-4">
+            * รวมคะแนนจากทุก Prediction และอัปเดตไปที่คะแนนรวมของ User แต่ละคน
+          </p>
+          <button 
+            onClick={async () => {
+              setLoading(true);
+              const result = await updateUserTotalScores();
+              setMessage(result.message);
+              setLoading(false);
+            }}
+            disabled={loading}
+            className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded-xl transition-all"
+          >
+            {loading ? 'UPDATING...' : 'UPDATE ALL USER SCORES'}
+          </button>
         </div>
       </div>
     </div>
