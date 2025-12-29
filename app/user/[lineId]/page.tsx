@@ -6,7 +6,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { cookies } from "next/headers"
 import { jwtVerify } from "jose"
-import { ArrowLeft, LogOut } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { getTeamLogo, getTeamName, getTeamShortName } from '@/lib/teams'
 
 // ต้องใช้ Secret เดียวกับที่ใช้ใน Middleware
@@ -57,7 +57,11 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
         <div className="w-32 h-32 rounded-full border-8 border-[#38003c] overflow-hidden bg-slate-800 shadow-2xl">
           <img src={user.image || "/default-avatar.png"} className="w-full h-full object-cover" />
         </div>
-        
+        {/* Total Points */}
+        <div className="mt-3 inline-block px-4 py-1 bg-[#00ff85] text-[#38003c] rounded-full font-bold text-sm uppercase">
+          {user.score.toLocaleString()} Total Points
+        </div>
+
         {/* ชื่อและปุ่ม Logout */}
         <div className="mt-4 flex flex-col items-center gap-2">
           <h1 className="text-3xl font-black italic uppercase text-white leading-none">
@@ -66,19 +70,21 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
           
           {/* ปุ่ม Logout สีแดงตามที่คุณต้องการ */}
           {isOwnProfile && (
-            <p>ออกจากระบบ</p>
+            <div>
+              <a
+                href="/logout"
+                className="mt-1 px-8 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-full transition-all shadow-lg uppercase border-2 border-red-500/50"
+              >
+                Logout
+              </a>
+            </div>
             // <Link 
-            //   href="/logout" 
+            //   href="" 
             //   className="mt-1 px-8 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-full transition-all shadow-lg uppercase border-2 border-red-500/50"
             // >
             //   
             // </Link>
           )}
-        </div>
-
-        {/* Total Points */}
-        <div className="mt-3 inline-block px-4 py-1 bg-[#00ff85] text-[#38003c] rounded-full font-bold text-sm uppercase">
-          {user.score.toLocaleString()} Total Points
         </div>
       </div>
 
