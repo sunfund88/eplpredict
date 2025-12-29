@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { getPredictActiveGW, isLiveGW, getFinishedGW, getCalculatedGW } from '@/app/actions/home'
 import StatusTab from './StatusTab'
 import PredictTab from './PredictTab'
+import ScoreboardTab from './ScoreboardTab'
 
 export default function HomeClient({ userId }: { userId: string }) {
   const [activeTab, setActiveTab] = useState('status_tab')
@@ -26,7 +27,7 @@ export default function HomeClient({ userId }: { userId: string }) {
   const tabConfigs: any = {
     status_tab: { color: 'bg-[#38003c]', label: 'Status' },
     fixture_tab: { color: 'bg-[#38003c]', label: 'Fixture' },
-    leaderboard: { color: 'bg-red-500', label: 'Scoreboard' }
+    leaderboard: { color: 'bg-[#38003c]', label: 'Scoreboard' }
   }
 
   return (
@@ -65,7 +66,9 @@ export default function HomeClient({ userId }: { userId: string }) {
           <PredictTab userId={userId} nextGW={nextGW}/>
         )}
 
-        {activeTab === 'leaderboard' && <div>{/* วนลูปโชว์อันดับ */}</div>}
+        {activeTab === 'leaderboard' && (
+          <ScoreboardTab/>
+        )}
       </div>
     </div>
   )
