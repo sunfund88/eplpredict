@@ -115,10 +115,10 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
                     {/* ทีมเหย้า */}
                     <div className="flex items-center gap-2 flex-1">
                       <span className="text-xs font-bold uppercase tracking-tighter w-10 text-right">
-                        {getTeamShortName(pred.fixture?.homeTeam)}
+                        {getTeamShortName(pred.fixture?.home)}
                       </span>
                       <img 
-                        src={getTeamLogo(pred.fixture?.homeTeam)} 
+                        src={getTeamLogo(pred.fixture?.home)} 
                         alt="home" 
                         className="w-6 h-6 object-contain"
                       />
@@ -138,12 +138,12 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
                     {/* ทีมเยือน */}
                     <div className="flex items-center gap-2 flex-1 justify-end">
                       <img 
-                        src={getTeamLogo(pred.fixture?.awayTeam)} 
+                        src={getTeamLogo(pred.fixture?.away)} 
                         alt="away" 
                         className="w-6 h-6 object-contain"
                       />
                       <span className="text-xs font-bold uppercase tracking-tighter w-10 text-left">
-                        {getTeamShortName(pred.fixture?.awayTeam)}
+                        {getTeamShortName(pred.fixture?.away)}
                       </span>
                     </div>
                   </div>
