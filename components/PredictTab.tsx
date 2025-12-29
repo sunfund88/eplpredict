@@ -108,7 +108,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
 
       {/* ส่วนนับเวลา: จะแสดงเฉพาะเมื่อยังไม่หมดเวลาเท่านั้น */}
       {deadline && currentGW === nextGW && !isPastDeadline && (
-        <div className="mb-6">
+        <div className="mb-2">
           <CountdownTimer 
             key={deadline} 
             deadline={deadline} 

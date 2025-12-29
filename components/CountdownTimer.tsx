@@ -44,7 +44,7 @@ export default function CountdownTimer({
   const displayTime = `${d}d ${h}h ${m}m ${s}s`
 
   return (
-    <div className="text-center p-3 rounded-xl border bg-lime-400/10 border-lime-400/50 text-lime-400 transition-opacity duration-300">
+    <div className="text-center p-3 rounded border bg-lime-400/10 border-lime-400/50 text-lime-400 transition-opacity duration-300">
       <p className="text-xs uppercase tracking-widest font-bold mb-1">Time Remaining</p>
       <p className="text-xl font-black font-mono">{displayTime}</p>
     </div>
