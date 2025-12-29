@@ -117,13 +117,6 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
         </div>
       )}
 
-      {/* สไตล์ตอนหมดเวลา: แสดงแค่แถบสีแดงเรียบๆ หรือไม่ต้องแสดงเลยก็ได้ */}
-      {isPastDeadline && currentGW === nextGW && (
-        <div className="mb-6 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-center text-red-400 font-bold uppercase tracking-widest">
-          Submissions Closed
-        </div>
-      )}
-
       {/* List */}
       <div className="flex flex-col">
         {loading ? (
