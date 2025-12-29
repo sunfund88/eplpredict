@@ -41,12 +41,14 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
   return (
     <div className="max-w-md mx-auto min-h-screen flex flex-col bg-[#38003c] relative">
       {/* 1. ปุ่มย้อนกลับ: บังคับ Z-50 เพื่อให้อยู่บนสุดจริงๆ */}
-      <Link 
-        href="/" 
-        className="fixed top-5 left-5 z-[99] p-3 bg-black/60 hover:bg-black/80 rounded-full border border-white/20 shadow-2xl active:scale-90 transition-all flex items-center justify-center"
-      >
-        <ArrowLeft className="text-white w-6 h-6" />
-      </Link>
+      <div className="fixed top-4 left-4 z-[60]"> 
+        <Link 
+          href="/" 
+          className="p-2.5 bg-black/50 hover:bg-black/70 rounded-full transition-all border border-white/20 flex items-center justify-center shadow-lg active:scale-95"
+        >
+          <ArrowLeft className="text-white w-5 h-5" />
+        </Link>
+      </div>
 
       {/* Header Profile Background */}
       <div className="bg-gradient-to-b from-[#00ff85] to-[#38003c] p-1 h-32 relative z-10"></div>
