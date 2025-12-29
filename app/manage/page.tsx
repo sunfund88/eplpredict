@@ -1,74 +1,90 @@
 // app/manage/page.tsx
 'use client'
 import { useState } from 'react'
-import { fetchAndSaveFixtures, calculatePoints } from './actions' // เพิ่ม calculatePoints
+import { fetchAndSaveFixtures, calculatePoints } from './actions'
 
 export default function Manage() {
-  const [gw, setGw] = useState('')
+  const [syncGw, setSyncGw] = useState('') // สำหรับดึงข้อมูล
+  const [calcGw, setCalcGw] = useState('') // สำหรับคำนวณคะแนน
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
-  const handleFetch = async () => {
-    if (!gw) return alert('Please enter Gameweek')
+  const handleSync = async () => {
+    if (!syncGw) return alert('Please enter GW to sync')
     setLoading(true)
-    const result = await fetchAndSaveFixtures(Number(gw))
+    const result = await fetchAndSaveFixtures(Number(syncGw))
     setMessage(result.message)
     setLoading(false)
   }
 
-  // เพิ่มฟังก์ชันสำหรับเรียก Calculate
   const handleCalculate = async () => {
-    if (!gw) return alert('Please enter Gameweek')
-    if (!confirm(`Are you sure to calculate points for GW ${gw}?`)) return
-    
+    if (!calcGw) return alert('Please enter GW to calculate')
     setLoading(true)
-    const result = await calculatePoints(Number(gw))
+    const result = await calculatePoints(Number(calcGw))
     setMessage(result.message)
     setLoading(false)
   }
 
   return (
-    <div className="max-w-md mx-auto bg-slate-900 text-white min-h-screen p-6">
-      <h1 className="text-2xl font-bold mb-2">Admin Dashboard</h1>
+    <div className="max-w-xl mx-auto p-6 bg-[#020617] min-h-screen text-white">
+      <h1 className="text-3xl font-black mb-8 text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-emerald-400">
+        ADMIN PANEL
+      </h1>
 
       {message && (
-        <p className={`mb-4 p-3 rounded ${message.includes('success') ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+        <div className={`mb-6 p-4 rounded-lg border ${message.includes('success') ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400' : 'bg-red-500/10 border-red-500/50 text-red-400'}`}>
           {message}
-        </p>
+        </div>
       )}
 
-      <div className="space-y-8">
-        {/* ส่วนเดิม: Sync Fixtures */}
-        <section className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-          <h2 className="text-lg font-semibold mb-4 text-blue-400">1. Sync Data from FPL</h2>
-          <input 
-            type="number" 
-            value={gw}
-            onChange={(e) => setGw(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-700 p-2 rounded mb-3 text-white"
-            placeholder="Enter Gameweek (e.g. 17)"
-          />
-          <button 
-            onClick={handleFetch}
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded font-bold disabled:opacity-50"
-          >
-            {loading ? 'Processing...' : 'Sync Fixtures'}
-          </button>
-        </section>
+      <div className="grid gap-6">
+        {/* 1. ส่วน Sync ข้อมูล */}
+        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <span className="w-2 h-6 bg-blue-500 rounded-full"></span>
+            1. Sync Fixtures & Stats
+          </h2>
+          <div className="flex gap-3">
+            <input 
+              type="number" 
+              value={syncGw}
+              onChange={(e) => setSyncGw(e.target.value)}
+              placeholder="GW"
+              className="w-24 bg-slate-950 border border-slate-700 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            <button 
+              onClick={handleSync}
+              disabled={loading}
+              className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 font-bold rounded-xl transition-all"
+            >
+              {loading ? 'SYNCING...' : 'SYNC FROM FPL'}
+            </button>
+          </div>
+        </div>
 
-        {/* ส่วนใหม่: Calculate Scores */}
-        <section className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-          <h2 className="text-lg font-semibold mb-4 text-lime-400">2. Calculate Points</h2>
-          <p className="text-sm text-slate-400 mb-4">* Compare user predictions with real scores and update points in DB.</p>
-          <button 
-            onClick={handleCalculate}
-            disabled={loading}
-            className="w-full bg-lime-500 hover:bg-lime-600 text-black py-2 rounded font-bold disabled:opacity-50"
-          >
-            {loading ? 'Calculating...' : `Calculate GW ${gw || ''} Points`}
-          </button>
-        </section>
+        {/* 2. ส่วนคำนวณคะแนน */}
+        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <span className="w-2 h-6 bg-lime-500 rounded-full"></span>
+            2. Calculate User Points
+          </h2>
+          <div className="flex gap-3">
+            <input 
+              type="number" 
+              value={calcGw}
+              onChange={(e) => setCalcGw(e.target.value)}
+              placeholder="GW"
+              className="w-24 bg-slate-950 border border-slate-700 p-3 rounded-xl focus:ring-2 focus:ring-lime-500 outline-none"
+            />
+            <button 
+              onClick={handleCalculate}
+              disabled={loading}
+              className="flex-1 bg-lime-500 hover:bg-lime-400 text-black font-bold rounded-xl transition-all"
+            >
+              {loading ? 'CALCULATING...' : 'CALCULATE NOW'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
