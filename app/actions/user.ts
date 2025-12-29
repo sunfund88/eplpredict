@@ -3,13 +3,23 @@
 import prisma from "@/lib/prisma"
 
 export async function getUserDetail(lineId: string) {
-  return await prisma.user.findUnique({
-    where: { lineId: lineId }, // สมมติว่า id ใน DB ของคุณคือ lineId
-    include: {
-      predictions: {
-        orderBy: { gw: 'desc' },
-        take: 20 // ดึงประวัติการทายผลล่าสุด 10 นัด
+  try {
+    const user = await prisma.user.findUnique({
+      where: { 
+        lineId: lineId 
+      },
+      include: {
+        predictions: {
+          orderBy: {
+            gw: 'desc'
+          },
+          take: 30
+        }
       }
-    }
-  })
+    });
+    return user;
+  } catch (error) {
+    console.error("Error fetching user detail:", error);
+    return null;
+  }
 }

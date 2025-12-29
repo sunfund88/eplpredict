@@ -72,7 +72,7 @@ export default async function Home() {
           </div>
 
           {/* รูป Profile (ขอบมนแบบในรูป Sketch) */}
-          <Link href={`/userdetail/${user.lineId}`} className="flex-shrink-0">
+          <Link href={`/user/${user.lineId}`} className="flex-shrink-0">
             <div className="w-10 h-10 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20">
               <img 
                 src={user.image!} 
