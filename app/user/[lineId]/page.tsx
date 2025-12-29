@@ -41,50 +41,45 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
   return (
     <div className="max-w-md mx-auto min-h-screen flex flex-col bg-[#38003c] relative">
       {/* 1. ปุ่มย้อนกลับ: บังคับ Z-50 เพื่อให้อยู่บนสุดจริงๆ */}
-      <div className="absolute top-4 left-4 z-50"> 
-        <Link 
-          href="/" 
-          className="p-2 bg-black/40 hover:bg-black/60 rounded-full transition-all border border-white/20 flex items-center justify-center"
-        >
-          <ArrowLeft className="text-white w-5 h-5" />
-        </Link>
-      </div>
+      <Link 
+        href="/" 
+        className="fixed top-5 left-5 z-[99] p-3 bg-black/60 hover:bg-black/80 rounded-full border border-white/20 shadow-2xl active:scale-90 transition-all flex items-center justify-center"
+      >
+        <ArrowLeft className="text-white w-6 h-6" />
+      </Link>
 
       {/* Header Profile Background */}
-      <div className="bg-gradient-to-b from-[#00ff85] to-[#38003c] p-1 h-32"></div>
+      <div className="bg-gradient-to-b from-[#00ff85] to-[#38003c] p-1 h-32 relative z-10"></div>
       
       <div className="px-6 -mt-16 relative z-10">
         <div className="flex flex-col items-center">
-          {/* รูปโปรไฟล์ */}
-          <div className="w-32 h-32 rounded-full border-8 border-[#38003c] overflow-hidden bg-slate-800 shadow-2xl">
-            <img 
-              src={user.image || "/default-avatar.png"} 
-              alt={user.name} 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          
-          {/* ชื่อและปุ่ม Logout */}
-        <div className="mt-4 flex flex-col items-center gap-3">
-          <h1 className="text-3xl font-black text-white leading-none">
+        {/* รูปโปรไฟล์ */}
+        <div className="w-32 h-32 rounded-full border-8 border-[#38003c] overflow-hidden bg-slate-800 shadow-2xl">
+          <img src={user.image || "/default-avatar.png"} className="w-full h-full object-cover" />
+        </div>
+        
+        {/* ชื่อและปุ่ม Logout */}
+        <div className="mt-4 flex flex-col items-center gap-2">
+          <h1 className="text-3xl font-black italic uppercase text-white leading-none">
             {user.name}
           </h1>
           
-          {/* แสดงปุ่ม Logout แบบข้อความสีแดง เฉพาะเจ้าของบัญชี */}
+          {/* ปุ่ม Logout สีแดงตามที่คุณต้องการ */}
           {isOwnProfile && (
             <Link 
               href="/logout" 
-              className="mt-2 px-6 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-full transition-all shadow-lg uppercase tracking-wider border-2 border-red-500/50"
+              className="mt-1 px-8 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-full transition-all shadow-lg uppercase border-2 border-red-500/50"
             >
-              Logout
+              ออกจากระบบ
             </Link>
           )}
         </div>
 
-          <div className="mt-2 inline-block px-4 py-1 bg-[#00ff85] text-[#38003c] rounded-full font-bold text-sm uppercase tracking-wide">
-            {user.score.toLocaleString()} Total Points
-          </div>
+        {/* Total Points */}
+        <div className="mt-3 inline-block px-4 py-1 bg-[#00ff85] text-[#38003c] rounded-full font-bold text-sm uppercase">
+          {user.score.toLocaleString()} Total Points
         </div>
+      </div>
 
         {/* ประวัติการทายผล */}
         <div className="mt-10 max-w-2xl mx-auto pb-20">
