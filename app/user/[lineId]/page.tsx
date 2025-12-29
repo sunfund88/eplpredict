@@ -1,12 +1,15 @@
 // app/user/[lineId]/page.tsx
+export const dynamic = 'force-dynamic' // เพิ่มบรรทัดนี้เพื่อบังคับให้ดึงข้อมูลใหม่เสมอ
+
 import { getUserDetail } from "@/app/actions/user"
 import { notFound } from "next/navigation"
 
 export default async function UserDetailPage({ params }: { params: { lineId: string } }) {
-  const { lineId } = params
+  const { lineId } = await params
   const user = await getUserDetail(lineId)
 
   if (!user) {
+    console.log("User not found for lineId:", lineId) // จะแสดงใน log ของ Vercel
     return notFound()
   }
 
