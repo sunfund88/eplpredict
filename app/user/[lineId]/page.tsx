@@ -66,12 +66,13 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
           
           {/* ปุ่ม Logout สีแดงตามที่คุณต้องการ */}
           {isOwnProfile && (
-            <Link 
-              href="/logout" 
-              className="mt-1 px-8 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-full transition-all shadow-lg uppercase border-2 border-red-500/50"
-            >
-              ออกจากระบบ
-            </Link>
+            <p>ออกจากระบบ</p>
+            // <Link 
+            //   href="/logout" 
+            //   className="mt-1 px-8 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-full transition-all shadow-lg uppercase border-2 border-red-500/50"
+            // >
+            //   
+            // </Link>
           )}
         </div>
 
