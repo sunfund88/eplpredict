@@ -1,13 +1,20 @@
-// CountdownTimer.tsx
+// components/CountdownTimer.tsx
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 
-export default function CountdownTimer({ deadline, initialIsExpired }: { deadline: string, initialIsExpired: boolean }) {
-  // ใช้ค่าที่ส่งมาจากแม่เป็นค่าเริ่มต้นทันที
+export default function CountdownTimer({ 
+  deadline, 
+  initialIsExpired 
+}: { 
+  deadline: string, 
+  initialIsExpired: boolean 
+}) {
   const [isExpired, setIsExpired] = useState(initialIsExpired)
-  const [timeLeft, setTimeLeft] = useState(initialIsExpired ? "DEADLINE PASSED" : "")
+  const [timeLeft, setTimeLeft] = useState<string | null>(null) // เริ่มต้นด้วย null
 
-  useEffect(() => {
+  // useLayoutEffect จะทำงานก่อนที่ Browser จะวาดภาพ (Paint)
+  // ช่วยแก้ปัญหาการ "แว๊บ" ได้ดีกว่า useEffect ธรรมดา
+  useLayoutEffect(() => {
     const calculate = () => {
       const now = new Date().getTime()
       const target = new Date(deadline).getTime()
@@ -17,20 +24,21 @@ export default function CountdownTimer({ deadline, initialIsExpired }: { deadlin
         setTimeLeft("DEADLINE PASSED")
         setIsExpired(true)
       } else {
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24))
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000)
-        setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`)
+        const d = Math.floor(distance / (1000 * 60 * 60 * 24))
+        const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+        const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+        const s = Math.floor((distance % (1000 * 60)) / 1000)
+        setTimeLeft(`${d}d ${h}h ${m}m ${s}s`)
         setIsExpired(false)
       }
     }
-
-    calculate() // รันซ้ำเพื่อความแม่นยำ
+    calculate()
     const timer = setInterval(calculate, 1000)
     return () => clearInterval(timer)
   }, [deadline])
 
+  // ถ้า timeLeft ยังเป็น null (จังหวะเสี้ยววินาทีแรกที่กำลังคำนวณ) 
+  // ให้แสดงกล่องเปล่าที่มีสีตาม initialIsExpired ไปก่อน จะไม่เห็นตัวหนังสือแว๊บ
   return (
     <div className={`text-center p-3 rounded-xl border transition-all duration-300 ${
       isExpired 
@@ -39,7 +47,7 @@ export default function CountdownTimer({ deadline, initialIsExpired }: { deadlin
     }`}>
       <p className="text-xs uppercase tracking-widest font-bold mb-1">Deadline Countdown</p>
       <p className="text-xl font-black font-mono">
-        {timeLeft || "---"} 
+        {timeLeft || "---"}
       </p>
     </div>
   )
