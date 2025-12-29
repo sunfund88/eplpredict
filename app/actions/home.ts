@@ -115,3 +115,23 @@ export async function upsertPrediction(userId: string, fixtureId: number, gw: nu
     }
   })
 }
+
+export async function getLeaderboard() {
+  try {
+    const users = await prisma.user.findMany({
+      orderBy: {
+        score: 'desc' // เรียงลำดับจากคะแนนมากไปน้อย
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        score: true
+      }
+    });
+    return users;
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    return [];
+  }
+}
