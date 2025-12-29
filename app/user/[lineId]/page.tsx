@@ -40,13 +40,15 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
 
   return (
     <div className="max-w-md mx-auto min-h-screen flex flex-col bg-[#38003c] relative">
-      {/* ปุ่มย้อนกลับไปหน้าแรก (บนซ้าย) */}
-      <Link 
-        href="/" 
-        className="absolute top-4 left-4 z-20 p-2 bg-black/30 hover:bg-black/50 rounded-full transition-all border border-white/10"
-      >
-        <ArrowLeft className="text-white w-5 h-5" />
-      </Link>
+      {/* 1. ปุ่มย้อนกลับ: บังคับ Z-50 เพื่อให้อยู่บนสุดจริงๆ */}
+      <div className="absolute top-4 left-4 z-50"> 
+        <Link 
+          href="/" 
+          className="p-2 bg-black/40 hover:bg-black/60 rounded-full transition-all border border-white/20 flex items-center justify-center"
+        >
+          <ArrowLeft className="text-white w-5 h-5" />
+        </Link>
+      </div>
 
       {/* Header Profile Background */}
       <div className="bg-gradient-to-b from-[#00ff85] to-[#38003c] p-1 h-32"></div>
@@ -63,22 +65,21 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
           </div>
           
           {/* ชื่อและปุ่ม Logout */}
-          <div className="mt-4 flex items-center gap-3">
-            <h1 className="text-3xl font-black italic uppercase text-white leading-none">
-              {user.name}
-            </h1>
-            
-            {/* แสดงปุ่ม Logout เฉพาะเจ้าของบัญชีเท่านั้น */}
-            {isOwnProfile && (
-              <Link 
-                href="/logout" 
-                className="p-2 bg-red-500/20 hover:bg-red-500/40 text-red-400 rounded-xl transition-all border border-red-500/30 shadow-lg"
-                title="Log out"
-              >
-                <LogOut className="w-5 h-5" />
-              </Link>
-            )}
-          </div>
+        <div className="mt-4 flex flex-col items-center gap-3">
+          <h1 className="text-3xl font-black text-white leading-none">
+            {user.name}
+          </h1>
+          
+          {/* แสดงปุ่ม Logout แบบข้อความสีแดง เฉพาะเจ้าของบัญชี */}
+          {isOwnProfile && (
+            <Link 
+              href="/logout" 
+              className="mt-2 px-6 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-full transition-all shadow-lg uppercase tracking-wider border-2 border-red-500/50"
+            >
+              Logout
+            </Link>
+          )}
+        </div>
 
           <div className="mt-2 inline-block px-4 py-1 bg-[#00ff85] text-[#38003c] rounded-full font-bold text-sm uppercase tracking-wide">
             {user.score.toLocaleString()} Total Points
