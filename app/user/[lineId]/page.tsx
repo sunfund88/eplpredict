@@ -14,7 +14,7 @@ export default async function UserDetailPage({ params }: { params: { lineId: str
   }
 
   return (
-    <div className="min-h-screen bg-[#38003c] text-white">
+    <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
       <div className="bg-gradient-to-b from-[#00ff85] to-[#38003c] p-1 h-32"></div>
       
       <div className="px-6 -mt-16">
