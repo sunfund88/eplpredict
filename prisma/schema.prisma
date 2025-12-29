@@ -35,6 +35,8 @@ model Fixture {
   awayScore   Int?
   finished    Boolean      @default(false)
   multiplier  Int          @default(1)
+  correctWinPoint  Int          @default(1)
+  correctScorePoint  Int          @default(3)
 
   goalsScored Json?        
   assists     Json?        

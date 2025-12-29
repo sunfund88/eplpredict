@@ -75,3 +75,64 @@ export async function syncGameweekStatus() {
     return { success: false };
   }
 }
+
+export async function calculatePoints(gw: number) {
+  try {
+    // 1. ดึงข้อมูล Fixtures ทั้งหมดใน GW นั้นที่แข่งจบแล้ว
+    const fixtures = await prisma.fixture.findMany({
+      where: { gw, finished: true }
+    });
+
+    if (fixtures.length === 0) {
+      return { success: false, message: "No finished fixtures found for this GW." };
+    }
+
+    // 2. ดึงข้อมูลการทายผลทั้งหมดของ GW นี้
+    const predictions = await prisma.prediction.findMany({
+      where: { gw }
+    });
+
+    const updatePromises = predictions.map((pred) => {
+      const actual = fixtures.find(f => f.id === pred.fixtureId);
+      if (!actual) return null;
+
+      let points = 0;
+
+      // คำนวณหาผู้ชนะ (Win/Draw/Loss)
+      const actualResult = actual.homeScore! > actual.awayScore! ? 'H' : actual.homeScore! < actual.awayScore! ? 'A' : 'D';
+      const predResult = pred.predHome > pred.predAway ? 'H' : pred.predHome < pred.predAway ? 'A' : 'D';
+
+      // เช็คทายถูก (Correct Result)
+      if (actualResult === predResult) {
+        points = actual.correctWinPoint * actual.multiplier * pred.multiplier;
+        
+        // เช็คทายสกอร์ถูก (Correct Score)
+        if (actual.homeScore === pred.predHome && actual.awayScore === pred.predAway) {
+          points = actual.correctScorePoint * actual.multiplier * pred.multiplier;
+        }
+      }
+
+      // อัปเดตคะแนนลงในแถว Prediction นั้นๆ
+      if (points > 0) {
+        return prisma.prediction.update({
+          where: { id: pred.id },
+          data: { score: points }
+        });
+      }
+      return null;
+    });
+
+    await Promise.all(updatePromises.filter(p => p !== null));
+
+    // 3. Mark ว่า Gameweek นี้คำนวณคะแนนแล้ว
+    await prisma.gameweek.update({
+      where: { gw },
+      data: { calculated: true }
+    });
+
+    return { success: true, message: `Points calculated for GW ${gw} successfully!` };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Error calculating points." };
+  }
+}
