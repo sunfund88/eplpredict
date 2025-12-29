@@ -1,15 +1,40 @@
 // components/CountdownTimer.tsx
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
-// components/CountdownTimer.tsx
 export default function CountdownTimer({ deadline }: { deadline: string }) {
-  const [timeLeft, setTimeLeft] = useState<string>('') // ค่าเริ่มต้นเป็นว่าง
-  const [isExpired, setIsExpired] = useState(false)
-  const [isReady, setIsReady] = useState(false) // เพิ่มตัวแปรเช็คความพร้อม
+  // 1. ใช้ useMemo เพื่อคำนวณสถานะ "ทันที" ตั้งแต่ Component เริ่มสร้าง
+  // วิธีนี้จะทำให้ค่าเริ่มต้นไม่เป็นค่าว่างหรือ false เสมอไป แต่จะคำนวณจากเวลาปัจจุบันเลย
+  const initialState = useMemo(() => {
+    const now = new Date().getTime()
+    const target = new Date(deadline).getTime()
+    const distance = target - now
+    
+    if (distance <= 0) {
+      return { text: "DEADLINE PASSED", expired: true }
+    }
+    
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000)
+    
+    return { 
+      text: `${days}d ${hours}h ${minutes}m ${seconds}s`, 
+      expired: false 
+    }
+  }, [deadline])
 
+  const [timeLeft, setTimeLeft] = useState(initialState.text)
+  const [isExpired, setIsExpired] = useState(initialState.expired)
+
+  // 2. อัปเดตทุกวินาทีตามปกติ
   useEffect(() => {
-    const calculate = () => {
+    // รีเซ็ตค่าตาม initialState ทันทีที่ deadline เปลี่ยน (เพื่อแก้ปัญหาตอนสลับ GW)
+    setTimeLeft(initialState.text)
+    setIsExpired(initialState.expired)
+
+    const timer = setInterval(() => {
       const now = new Date().getTime()
       const target = new Date(deadline).getTime()
       const distance = target - now
@@ -17,6 +42,7 @@ export default function CountdownTimer({ deadline }: { deadline: string }) {
       if (distance <= 0) {
         setTimeLeft("DEADLINE PASSED")
         setIsExpired(true)
+        clearInterval(timer)
       } else {
         const days = Math.floor(distance / (1000 * 60 * 60 * 24))
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
@@ -25,19 +51,13 @@ export default function CountdownTimer({ deadline }: { deadline: string }) {
         setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`)
         setIsExpired(false)
       }
-      setIsReady(true) // คำนวณเสร็จแล้วพร้อมแสดงผล
-    }
+    }, 1000)
 
-    calculate() // รันครั้งแรกทันที
-    const timer = setInterval(calculate, 1000)
     return () => clearInterval(timer)
-  }, [deadline])
-
-  // ถ้ายังคำนวณไม่เสร็จ ไม่ต้องแสดงแถบสีแดง/เขียว หรือข้อความ Deadlines
-  if (!isReady) return <div className="p-3 h-[74px]"></div> 
+  }, [deadline, initialState])
 
   return (
-    <div className={`text-center p-3 rounded-xl border transition-all duration-500 ${
+    <div className={`text-center p-3 rounded-xl border transition-all duration-300 ${
       isExpired 
         ? 'bg-red-500/10 border-red-500/50 text-red-400' 
         : 'bg-lime-400/10 border-lime-400/50 text-lime-400'
