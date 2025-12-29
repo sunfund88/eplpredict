@@ -129,7 +129,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
               userId={userId}
               initialPrediction={predictions.find(p => p.fixtureId === item.id)}
               isPast={isPastDeadline || currentGW < nextGW}
-              testMode={true}// ส่งฟังก์ชันไปดึงค่า score
+              testMode={false}// ส่งฟังก์ชันไปดึงค่า score
               onScoreChange={(home, away) => updateLocalScore(item.id, home, away)}
             />
           ))
