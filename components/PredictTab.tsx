@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { getFixturesByGW, getUserPredictions, upsertPrediction, getGameweekInfo } from '@/app/actions/home'
 import PredictionRow from './PredictionRow' // Import row ที่สร้างใหม่
+import CountdownTimer from './CountdownTimer'
 
 export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:number }) {
   const [currentGW, setCurrentGW] = useState<number>(nextGW)
@@ -86,7 +87,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
           <p className="text-lg font-bold animate-pulse text-white">Sending data to Database...</p>
         </div>
       )}
-      
+
       {/* ส่วนหัวแสดงผล Countdown */}
       {deadline && currentGW === nextGW && (
         <div className="mb-6">
