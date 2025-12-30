@@ -20,14 +20,11 @@ const checkIsExpired = (deadlineStr: string) => {
   return new Date().getTime() > new Date(deadlineStr).getTime()
 }
 
-export default function PredictTab({ 
-  userId, 
-  nextGW,
-  sharedFixtures, setSharedFixtures,
-  sharedPredictions, setSharedPredictions,
-  sharedCurrentGW, setSharedCurrentGW,
-  sharedCache
-}: any) {
+export default function PredictTab({ userId, nextGW, predictCache }: any) {
+  const [fixtures, setFixtures] = useState<any[]>([])
+  const [predictions, setPredictions] = useState<any[]>([])
+  const [currentGW, setCurrentGW] = useState<number>(0)
+
   const [loading, setLoading] = useState(true)
   const [deadline, setDeadline] = useState<string | null>(null)
   const [isPastDeadline, setIsPastDeadline] = useState(false)
@@ -42,10 +39,10 @@ export default function PredictTab({
   // ฟังก์ชันดึงข้อมูลแบบฉลาด (Smart Fetch)
   const fetchData = async (gw: number, useCache = true) => {
     // 1. ตรวจสอบใน Cache ก่อน
-    if (useCache && sharedCache.current[gw]) {
-      const cachedData = sharedCache.current[gw]
-      setSharedFixtures(cachedData.fixtures)
-      setSharedPredictions(cachedData.predictions)
+    if (useCache && predictCache.current[gw]) {
+      const cachedData = predictCache.current[gw]
+      setFixtures(cachedData.fixtures)
+      setPredictions(cachedData.predictions)
       setDeadline(cachedData.deadline)
       if (cachedData.deadline) {
         setIsPastDeadline(new Date().getTime() > new Date(cachedData.deadline).getTime())
@@ -69,7 +66,9 @@ export default function PredictTab({
       if (data && data.fixtures) {
         fList = data.fixtures
         const fIds = fList.map((f: any) => f.id)
-        pList = await getUserPredictions(userId, fIds)
+        if (gw>=nextGW){
+          pList = await getUserPredictions(userId, fIds)
+        }
       }
 
       if (gwInfo) {
@@ -77,11 +76,11 @@ export default function PredictTab({
       }
 
       // 2. เก็บลง sharedCache ของตัวแม่
-      sharedCache[gw] = { fixtures: fList, predictions: pList, deadline: dl }
+      predictCache.current[gw] = { fixtures: fList, predictions: pList, deadline: dl }
 
       // 3. อัปเดต State ที่ตัวแม่
-      setSharedFixtures(fList)
-      setSharedPredictions(pList)
+      setFixtures(fList)
+      setPredictions(pList)
       setDeadline(dl)
       if (dl) setIsPastDeadline(new Date().getTime() > new Date(dl).getTime())
       
@@ -97,7 +96,7 @@ export default function PredictTab({
     const gwsToFetch = [startGW - 1, startGW - 2, startGW - 3, startGW - 4].filter(gw => gw >= 1)
     
     for (const gw of gwsToFetch) {
-      if (!sharedCache[gw]) {
+      if (!predictCache.current[gw]) {
         const data = await getFixturesByGW(gw)
         if (data && data.fixtures) {
           const fIds = data.fixtures.map((f: any) => f.id)
@@ -106,7 +105,7 @@ export default function PredictTab({
           const pList: PredictionData[] = await getUserPredictions(userId, fIds)
           
           const gwInfo = await getGameweekInfo(gw)
-          sharedCache[gw] = { 
+          predictCache.current[gw] = { 
             fixtures: data.fixtures, 
             predictions: pList, 
             deadline: gwInfo?.gwDeadline.toISOString() || null 
@@ -126,7 +125,7 @@ export default function PredictTab({
 
   const handleGWChange = async (newGW: number) => {
     if (newGW < 1 || newGW > nextGW) return
-    setSharedCurrentGW(newGW)
+    setCurrentGW(newGW)
     await fetchData(newGW, true)
   }
 
@@ -139,13 +138,13 @@ export default function PredictTab({
     setIsSubmitting(true); // เริ่ม Animation การส่งข้อมูล
     try {
       const promises = Object.entries(localScores).map(([fixtureId, scores]) => 
-        upsertPrediction(userId, parseInt(fixtureId), sharedCurrentGW, scores.home, scores.away)
+        upsertPrediction(userId, parseInt(fixtureId), currentGW, scores.home, scores.away)
       );
       
       await Promise.all(promises);
       
       // เมื่อเสร็จแล้ว ให้โหลดข้อมูลใหม่จาก Server เพื่ออัปเดตสถานะปุ่มในแต่ละ Row
-      await fetchData(setSharedCurrentGW, false); 
+      await fetchData(currentGW, false); 
       setLocalScores({}); // ล้างค่าที่ค้างอยู่ใน local state
       alert("All data successfully saved!");
     } catch (error) {
@@ -186,13 +185,13 @@ export default function PredictTab({
 
       {/* Header (เหมือนเดิม) */}
       <div className="flex items-center justify-between mb-4">
-        <button onClick={() => handleGWChange(sharedCurrentGW - 1)} className="p-2">❮</button>
-        <h2 className="text-xl font-bold">Gameweek {sharedCurrentGW}</h2>
-        <button onClick={() => handleGWChange(sharedCurrentGW + 1)} className="p-2">❯</button>
+        <button onClick={() => handleGWChange(currentGW - 1)} className="p-2">❮</button>
+        <h2 className="text-xl font-bold">Gameweek {currentGW}</h2>
+        <button onClick={() => handleGWChange(currentGW + 1)} className="p-2">❯</button>
       </div>
 
       {/* ส่วนนับเวลา: จะแสดงเฉพาะเมื่อยังไม่หมดเวลาเท่านั้น */}
-      {deadline && sharedCurrentGW === nextGW && !isPastDeadline && (
+      {deadline && currentGW === nextGW && !isPastDeadline && (
         <div className="mb-2">
           <CountdownTimer 
             key={deadline} 
@@ -207,13 +206,13 @@ export default function PredictTab({
         {loading ? (
           <p className="text-center py-10 opacity-50">Loading ...</p>
         ) : (
-          sharedFixtures.map((item: any) => (
+          fixtures.map((item: any) => (
             <PredictionRow 
               key={item.id} 
               fixture={item} 
               userId={userId}
-              initialPrediction={sharedPredictions.find((p: any) => p.fixtureId === item.id)}
-              isPast={isPastDeadline || sharedCurrentGW < nextGW}
+              initialPrediction={predictions.find((p: any) => p.fixtureId === item.id)}
+              isPast={isPastDeadline || currentGW < nextGW}
               testMode={false}// ส่งฟังก์ชันไปดึงค่า score
               onScoreChange={(home, away) => updateLocalScore(item.id, home, away)}
             />
@@ -222,7 +221,7 @@ export default function PredictTab({
       </div>
 
       {/* Floating Predict All Button */}
-      {!loading && sharedFixtures.length > 0 && sharedCurrentGW >= nextGW && (
+      {!loading && fixtures.length > 0 && currentGW >= nextGW && (
         <div className="flex justify-center">
           <button 
             onClick={handlePredictAll}

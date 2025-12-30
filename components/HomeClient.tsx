@@ -10,19 +10,14 @@ export default function HomeClient({ userId }: { userId: string }) {
   const [activeTab, setActiveTab] = useState('fixture_tab')
   const [nextGW, setNextGW] = useState<number>(0)
   
-  // --- เพิ่มส่วนนี้เพื่อเก็บข้อมูลไว้ที่ตัวแม่ ---
-  const [fixtures, setFixtures] = useState<any[]>([])
-  const [predictions, setPredictions] = useState<any[]>([])
-  const [currentGW, setCurrentGW] = useState<number>(0)
   
   // ใช้ useRef เพื่อทำ Cache ข้ามการเปลี่ยน Tab
-  const cache = useRef<Record<number, { fixtures: any[], predictions: any[], deadline: string | null }>>({})
+  const predictCache = useRef<Record<number, { fixtures: any[], predictions: any[], deadline: string | null }>>({})
 
   useEffect(() => {
     const init = async () => {
       const gw = await getPredictActiveGW()
       setNextGW(gw)
-      setCurrentGW(gw) // ตั้งค่า GW เริ่มต้น
     }
     init()
   }, [])
@@ -70,14 +65,7 @@ export default function HomeClient({ userId }: { userId: string }) {
           <PredictTab 
             userId={userId} 
             nextGW={nextGW}
-            // --- ส่ง State และ Cache ลงไปให้ลูก ---
-            sharedFixtures={fixtures}
-            setSharedFixtures={setFixtures}
-            sharedPredictions={predictions}
-            setSharedPredictions={setPredictions}
-            sharedCurrentGW={currentGW}
-            setSharedCurrentGW={setCurrentGW}
-            sharedCache={cache}
+            predictCache={predictCache}
           />
         )}
 
