@@ -1,16 +1,27 @@
 // StatusTab.tsx
 'use client'
 import { useState, useEffect } from 'react'
+import { isLiveGW, getFinishedGW, getCalculatedGW } from '@/app/actions/home'
 
 interface StatusTabProps {
   nextGW: number;
-  finishedGW: number;
-  calculatedGW: number;
-  isLive: boolean;
   onNavigate: () => void;
 }
 
-export default function StatusTab({ nextGW, finishedGW, calculatedGW, isLive, onNavigate }: StatusTabProps) {
+export default function StatusTab({ nextGW, onNavigate }: StatusTabProps) {
+  const [finishedGW, setFinishedGW] = useState<number>(0)
+  const [calculatedGW, setCalculatedGW] = useState<number>(0)
+  const [isLive, setIsLive] = useState<boolean>(false)
+
+  useEffect(() => {
+    const init = async () => {
+      setFinishedGW(await getFinishedGW())
+      setCalculatedGW(await getCalculatedGW())
+      setIsLive(await isLiveGW())
+    }
+    init()
+  }, [])
+
   return (
     <div className="flex flex-col gap-4 p-4 text-white min-h-screen">
       

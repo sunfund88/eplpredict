@@ -7,18 +7,12 @@ import PredictTab from './PredictTab'
 import ScoreboardTab from './ScoreboardTab'
 
 export default function HomeClient({ userId }: { userId: string }) {
-  const [activeTab, setActiveTab] = useState('status_tab')
+  const [activeTab, setActiveTab] = useState('fixture_tab')
   const [nextGW, setNextGW] = useState<number>(0)
-  const [finishedGW, setFinishedGW] = useState<number>(0)
-  const [calculatedGW, setCalculatedGW] = useState<number>(0)
-  const [isLive, setIsLive] = useState<boolean>(false)
 
   useEffect(() => {
     const init = async () => {
       setNextGW(await getPredictActiveGW())
-      setFinishedGW(await getFinishedGW())
-      setCalculatedGW(await getCalculatedGW())
-      setIsLive(await isLiveGW())
     }
     init()
   }, [])
@@ -55,7 +49,7 @@ export default function HomeClient({ userId }: { userId: string }) {
           <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
         )}
         {activeTab === 'status_tab' && nextGW !== 0 && (
-          <StatusTab nextGW={nextGW} finishedGW={finishedGW} calculatedGW={calculatedGW} isLive={isLive} onNavigate={() => setActiveTab('fixture_tab')} />
+          <StatusTab nextGW={nextGW} onNavigate={() => setActiveTab('fixture_tab')} />
         )}
 
         {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
