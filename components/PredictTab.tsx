@@ -20,15 +20,20 @@ const checkIsExpired = (deadlineStr: string) => {
   return new Date().getTime() > new Date(deadlineStr).getTime()
 }
 
-export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:number }) {
-  const [currentGW, setCurrentGW] = useState<number>(nextGW)
-  const [fixtures, setFixtures] = useState<any[]>([])
-  const [predictions, setPredictions] = useState<any[]>([])
+export default function PredictTab({ 
+  userId, 
+  nextGW,
+  sharedFixtures, setSharedFixtures,
+  sharedPredictions, setSharedPredictions,
+  sharedCurrentGW, setSharedCurrentGW,
+  sharedCache
+}: any) {
   const [loading, setLoading] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false); // เพิ่ม State สำหรับตอนส่งข้อมูล
-  const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number}>>({})
   const [deadline, setDeadline] = useState<string | null>(null)
   const [isPastDeadline, setIsPastDeadline] = useState(false)
+
+  const [isSubmitting, setIsSubmitting] = useState(false); // เพิ่ม State สำหรับตอนส่งข้อมูล
+  const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number}>>({})
 
   // --- ระบบ Caching ---
   // ใช้ useRef เพื่อเก็บข้อมูลโดยไม่ทำให้ Component re-render โดยไม่จำเป็น
@@ -37,10 +42,10 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   // ฟังก์ชันดึงข้อมูลแบบฉลาด (Smart Fetch)
   const fetchData = async (gw: number, useCache = true) => {
     // 1. ตรวจสอบใน Cache ก่อน
-    if (useCache && cache.current[gw]) {
-      const cachedData = cache.current[gw]
-      setFixtures(cachedData.fixtures)
-      setPredictions(cachedData.predictions)
+    if (useCache && sharedCache.current[gw]) {
+      const cachedData = sharedCache.current[gw]
+      setSharedFixtures(cachedData.fixtures)
+      setSharedPredictions(cachedData.predictions)
       setDeadline(cachedData.deadline)
       if (cachedData.deadline) {
         setIsPastDeadline(new Date().getTime() > new Date(cachedData.deadline).getTime())
@@ -71,12 +76,12 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
         dl = gwInfo.gwDeadline.toISOString()
       }
 
-      // 2. เก็บลง Cache
-      cache.current[gw] = { fixtures: fList, predictions: pList, deadline: dl }
+      // 2. เก็บลง sharedCache ของตัวแม่
+      sharedCache.current[gw] = { fixtures: fList, predictions: pList, deadline: dl }
 
-      // 3. แสดงผล
-      setFixtures(fList)
-      setPredictions(pList)
+      // 3. อัปเดต State ที่ตัวแม่
+      setSharedFixtures(fList)
+      setSharedPredictions(pList)
       setDeadline(dl)
       if (dl) setIsPastDeadline(new Date().getTime() > new Date(dl).getTime())
       
@@ -121,7 +126,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
 
   const handleGWChange = async (newGW: number) => {
     if (newGW < 1 || newGW > nextGW) return
-    setCurrentGW(newGW)
+    setSharedCurrentGW(newGW)
     await fetchData(newGW, true)
   }
 
@@ -134,13 +139,13 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
     setIsSubmitting(true); // เริ่ม Animation การส่งข้อมูล
     try {
       const promises = Object.entries(localScores).map(([fixtureId, scores]) => 
-        upsertPrediction(userId, parseInt(fixtureId), currentGW, scores.home, scores.away)
+        upsertPrediction(userId, parseInt(fixtureId), sharedCurrentGW, scores.home, scores.away)
       );
       
       await Promise.all(promises);
       
       // เมื่อเสร็จแล้ว ให้โหลดข้อมูลใหม่จาก Server เพื่ออัปเดตสถานะปุ่มในแต่ละ Row
-      await fetchData(currentGW, false); 
+      await fetchData(setSharedCurrentGW, false); 
       setLocalScores({}); // ล้างค่าที่ค้างอยู่ใน local state
       alert("All data successfully saved!");
     } catch (error) {
@@ -181,13 +186,13 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
 
       {/* Header (เหมือนเดิม) */}
       <div className="flex items-center justify-between mb-4">
-        <button onClick={() => handleGWChange(currentGW - 1)} className="p-2">❮</button>
-        <h2 className="text-xl font-bold">Gameweek {currentGW}</h2>
-        <button onClick={() => handleGWChange(currentGW + 1)} className="p-2">❯</button>
+        <button onClick={() => handleGWChange(sharedCurrentGW - 1)} className="p-2">❮</button>
+        <h2 className="text-xl font-bold">Gameweek {sharedCurrentGW}</h2>
+        <button onClick={() => handleGWChange(sharedCurrentGW + 1)} className="p-2">❯</button>
       </div>
 
       {/* ส่วนนับเวลา: จะแสดงเฉพาะเมื่อยังไม่หมดเวลาเท่านั้น */}
-      {deadline && currentGW === nextGW && !isPastDeadline && (
+      {deadline && sharedCurrentGW === nextGW && !isPastDeadline && (
         <div className="mb-2">
           <CountdownTimer 
             key={deadline} 
@@ -202,13 +207,13 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
         {loading ? (
           <p className="text-center py-10 opacity-50">Loading ...</p>
         ) : (
-          fixtures.map((item) => (
+          sharedFixtures.map((item: any) => (
             <PredictionRow 
               key={item.id} 
               fixture={item} 
               userId={userId}
-              initialPrediction={predictions.find(p => p.fixtureId === item.id)}
-              isPast={isPastDeadline || currentGW < nextGW}
+              initialPrediction={sharedPredictions.find((p: any) => p.fixtureId === item.id)}
+              isPast={isPastDeadline || sharedCurrentGW < nextGW}
               testMode={false}// ส่งฟังก์ชันไปดึงค่า score
               onScoreChange={(home, away) => updateLocalScore(item.id, home, away)}
             />
@@ -217,7 +222,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       </div>
 
       {/* Floating Predict All Button */}
-      {!loading && fixtures.length > 0 && currentGW >= nextGW && (
+      {!loading && sharedFixtures.length > 0 && sharedCurrentGW >= nextGW && (
         <div className="flex justify-center">
           <button 
             onClick={handlePredictAll}

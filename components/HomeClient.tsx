@@ -1,6 +1,6 @@
 // components/HomeClient.tsx
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getPredictActiveGW, isLiveGW, getFinishedGW, getCalculatedGW } from '@/app/actions/home'
 import StatusTab from './StatusTab'
 import PredictTab from './PredictTab'
@@ -9,10 +9,20 @@ import ScoreboardTab from './ScoreboardTab'
 export default function HomeClient({ userId }: { userId: string }) {
   const [activeTab, setActiveTab] = useState('fixture_tab')
   const [nextGW, setNextGW] = useState<number>(0)
+  
+  // --- เพิ่มส่วนนี้เพื่อเก็บข้อมูลไว้ที่ตัวแม่ ---
+  const [fixtures, setFixtures] = useState<any[]>([])
+  const [predictions, setPredictions] = useState<any[]>([])
+  const [currentGW, setCurrentGW] = useState<number>(0)
+  
+  // ใช้ useRef เพื่อทำ Cache ข้ามการเปลี่ยน Tab
+  const cache = useRef<Record<number, { fixtures: any[], predictions: any[], deadline: string | null }>>({})
 
   useEffect(() => {
     const init = async () => {
-      setNextGW(await getPredictActiveGW())
+      const gw = await getPredictActiveGW()
+      setNextGW(gw)
+      setCurrentGW(gw) // ตั้งค่า GW เริ่มต้น
     }
     init()
   }, [])
@@ -57,7 +67,18 @@ export default function HomeClient({ userId }: { userId: string }) {
           <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
         )}
         {activeTab === 'fixture_tab' && nextGW !== 0 && (
-          <PredictTab userId={userId} nextGW={nextGW}/>
+          <PredictTab 
+            userId={userId} 
+            nextGW={nextGW}
+            // --- ส่ง State และ Cache ลงไปให้ลูก ---
+            sharedFixtures={fixtures}
+            setSharedFixtures={setFixtures}
+            sharedPredictions={predictions}
+            setSharedPredictions={setPredictions}
+            sharedCurrentGW={currentGW}
+            setSharedCurrentGW={setCurrentGW}
+            sharedCache={cache}
+          />
         )}
 
         {activeTab === 'leaderboard' && (
