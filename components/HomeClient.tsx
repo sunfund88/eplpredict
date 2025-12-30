@@ -67,46 +67,42 @@ export default function HomeClient({ user }: { user: UserProfile }) {
   return (
     <div className="flex flex-col flex-1">
       {/* Header */}
-      {(currentEnv === 'production')?(
-        <div className="relative w-full h-[60px] overflow-hidden shadow-md bg-gradient-to-r from-[#f06272] via-[#9d50bb] to-[#6e48aa] flex items-center justify-between px-3">
-          {/* 1. ส่วน Logo (EPL Predict) - อยู่ฝั่งซ้าย */}
-          <div className="flex flex-col justify-center select-none">
-            <h1 className="text-3xl font-black leading-none text-black tracking-tighter">
-              EPL Predict
-            </h1>
-          </div>
+      <div className="relative w-full h-[60px] overflow-hidden shadow-md bg-gradient-to-r from-[#f06272] via-[#9d50bb] to-[#6e48aa] flex items-center justify-between px-3">
+        {/* 1. ส่วน Logo (EPL Predict) - อยู่ฝั่งซ้าย */}
+        <div className="flex flex-col justify-center select-none">
+          <h1 className="text-3xl font-black leading-none text-black tracking-tighter">
+            EPL Predict
+          </h1>
+        </div>
 
-          {/* 2. ส่วนข้อมูล User - อยู่ฝั่งขวา */}
-          <div onClick={() => handleShowProfile(user.id)}>
-            <div className="flex items-center gap-3">
-              {user && ( // เพิ่มการเช็คว่ามี user หรือไม่
-                <>
-                  <div className="flex flex-col items-end text-white drop-shadow-sm">
-                    <span className="text-sm font-bold leading-none">
-                      {user.name}
-                    </span>
-                    <span className="text-xs font-medium opacity-90">
-                      Score: {user.score}
-                    </span>
+        {/* 2. ส่วนข้อมูล User - อยู่ฝั่งขวา */}
+        <div onClick={() => handleShowProfile(user.id)}>
+          <div className="flex items-center gap-3">
+            {user && ( // เพิ่มการเช็คว่ามี user หรือไม่
+              <>
+                <div className="flex flex-col items-end text-white drop-shadow-sm">
+                  <span className="text-sm font-bold leading-none">
+                    {user.name}
+                  </span>
+                  <span className="text-xs font-medium opacity-90">
+                    Score: {user.score}
+                  </span>
+                </div>
+
+                <Link href={`/user/${user.lineId}`} className="flex-shrink-0">
+                  <div className="w-10 h-10 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20">
+                    <img 
+                      src={user.image || '/default-avatar.png'} 
+                      className="w-full h-full object-cover" 
+                      alt="profile" 
+                    />
                   </div>
-
-                  <Link href={`/user/${user.lineId}`} className="flex-shrink-0">
-                    <div className="w-10 h-10 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20">
-                      <img 
-                        src={user.image || '/default-avatar.png'} 
-                        className="w-full h-full object-cover" 
-                        alt="profile" 
-                      />
-                    </div>
-                  </Link>
-                </>
-              )}
-            </div>
+                </Link>
+              </>
+            )}
           </div>
         </div>
-      ):(
-        <p>Preview</p>
-      )}
+      </div>
       {/* Tab Navigation */}
       {!isProfileLoading ? (
         <div className="flex bg-gray-200">

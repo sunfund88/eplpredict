@@ -60,8 +60,8 @@ export default async function Home() {
       id: '513d2c62-cbeb-4e1e-bb15-92deea7dbb83',
       name: 'Test User',
       score: 0,
-      lineId: 'test-line-id',
-      image: 'https://via.placeholder.com/150'
+      lineId: 'Uafe8d8e81d4af1947592d2ae4fc9ac0b',
+      image: 'https://scontent.fphs1-1.fna.fbcdn.net/v/t39.30808-6/464993633_122098003922598671_5652212377622387416_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=GPizQ7u5mKQQ7kNvwF2s8sj&_nc_oc=AdmR0ORkso4NNSGYHXjzOhOsWDrDc-LWJla0WEa_jO-uacI3QdWpdYPyIDaVFX0UB8s&_nc_zt=23&_nc_ht=scontent.fphs1-1.fna&_nc_gid=VD6GLUaS46fDTjonhpYHlw&oh=00_AfkiDb3O29UNftbHdtqvefyBqQGgi0cQnJppiWQfyYoKmQ&oe=6959B687'
     }
   }
 
