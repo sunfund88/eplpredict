@@ -5,11 +5,11 @@ import { getTeamLogo, getTeamShortName } from '@/lib/teams'
 
 export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
   return (
-    <div className="flex flex-col bg-[#38003c] min-h-screen relative z-[50]">
+    <div className="flex flex-col bg-[#38003c] min-h-screen relative">
       {/* ปุ่มย้อนกลับ เพื่อปิดหน้าโปรไฟล์ */}
       <button 
         onClick={onBack}
-        className="fixed top-5 left-5 z-[100] p-2 bg-black/40 hover:bg-black/60 rounded-full border border-white/20"
+        className="fixed top-5 left-5 p-2 bg-black/40 hover:bg-black/60 rounded-full border border-white/20"
       >
         <ArrowLeft className="text-white w-6 h-6" />
       </button>
