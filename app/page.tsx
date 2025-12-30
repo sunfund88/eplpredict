@@ -2,7 +2,6 @@
 import { jwtVerify } from 'jose'
 import prisma from '@/lib/prisma'
 import { cookies } from 'next/headers'
-import Link from 'next/link'
 import HomeClient from '@/components/HomeClient'
 
 interface UserProfile {
@@ -61,55 +60,15 @@ export default async function Home() {
       id: '513d2c62-cbeb-4e1e-bb15-92deea7dbb83',
       name: 'Test User',
       score: 0,
-      lineId: 'test-line-id',
-      image: 'https://via.placeholder.com/150'
+      lineId: 'Uafe8d8e81d4af1947592d2ae4fc9ac0b',
+      image: 'https://scontent.fphs1-1.fna.fbcdn.net/v/t39.30808-6/464993633_122098003922598671_5652212377622387416_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=GPizQ7u5mKQQ7kNvwF2s8sj&_nc_oc=AdmR0ORkso4NNSGYHXjzOhOsWDrDc-LWJla0WEa_jO-uacI3QdWpdYPyIDaVFX0UB8s&_nc_zt=23&_nc_ht=scontent.fphs1-1.fna&_nc_gid=VD6GLUaS46fDTjonhpYHlw&oh=00_AfkiDb3O29UNftbHdtqvefyBqQGgi0cQnJppiWQfyYoKmQ&oe=6959B687'
     }
   }
 
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
-      {(currentEnv === 'production')?(
-        <div className="relative w-full h-[60px] overflow-hidden shadow-md bg-gradient-to-r from-[#f06272] via-[#9d50bb] to-[#6e48aa] flex items-center justify-between px-3">
-        
-          {/* 1. ส่วน Logo (EPL Predict) - อยู่ฝั่งซ้าย */}
-          <div className="flex flex-col justify-center select-none">
-            <h1 className="text-3xl font-black leading-none text-black tracking-tighter">
-              EPL Predict
-            </h1>
-          </div>
-
-          {/* 2. ส่วนข้อมูล User - อยู่ฝั่งขวา */}
-          <div className="flex items-center gap-3">
-            {user && ( // เพิ่มการเช็คว่ามี user หรือไม่
-              <>
-                <div className="flex flex-col items-end text-white drop-shadow-sm">
-                  <span className="text-sm font-bold leading-none">
-                    {user.name}
-                  </span>
-                  <span className="text-xs font-medium opacity-90">
-                    Score: {user.score}
-                  </span>
-                </div>
-
-                <Link href={`/user/${user.lineId}`} className="flex-shrink-0">
-                  <div className="w-10 h-10 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20">
-                    <img 
-                      src={user.image || '/default-avatar.png'} 
-                      className="w-full h-full object-cover" 
-                      alt="profile" 
-                    />
-                  </div>
-                </Link>
-              </>
-            )}
-          </div>
-
-        </div>
-      ):(
-        <p>Preview</p>
-      )}
       {/* ส่วนเนื้อหา 3 Tabs (ส่งข้อมูลไปจัดการต่อที่ Client) */}
-      {user && <HomeClient userId={user.id} />}    
+      {user && <HomeClient user={user} />}    
     </div>
   )
 }
