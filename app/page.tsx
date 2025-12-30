@@ -5,17 +5,26 @@ import { cookies } from 'next/headers'
 import Link from 'next/link'
 import HomeClient from '@/components/HomeClient'
 
+interface UserProfile {
+  id: string;
+  name: string;
+  lineId: string;
+  image: string | null;
+  score: number;
+}
+
 export default async function Home() {
   const cookieStore = await cookies()
   const token = cookieStore.get('user_session')?.value
   let userId = null
-  let user = null
+  let user: UserProfile | null = null;
 
   const test_mode = true
+  const currentEnv = process.env.VERCEL_ENV;
 
-
-  if (!test_mode) {
-      // 1. ตรวจสอบ Login
+  if (currentEnv === 'production') {
+    // ทำเฉพาะบนหน้าเว็บจริง เช่น ต่อ Database ตัวจริง, เก็บ Analytics
+    // 1. ตรวจสอบ Login
     if (token) {
       try {
         const secret = new TextEncoder().encode(process.env.JWT_SECRET)
@@ -46,15 +55,20 @@ export default async function Home() {
         </div>
       )
     }
+  } else if (currentEnv === 'preview' || !currentEnv) {
+    // ทำเฉพาะตอนทดสอบบน Branch อื่น เช่น ใช้ Database สำหรับ Test
+    user = {
+      id: '513d2c62-cbeb-4e1e-bb15-92deea7dbb83',
+      name: 'Test User',
+      score: 0,
+      lineId: 'test-line-id',
+      image: 'https://via.placeholder.com/150'
+    }
   }
-  else{
-    user = {'id':'513d2c62-cbeb-4e1e-bb15-92deea7dbb83'}
-  }  
-
 
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">
-      {(!test_mode)?(
+      {(currentEnv === 'production')?(
         <div className="relative w-full h-[60px] overflow-hidden shadow-md bg-gradient-to-r from-[#f06272] via-[#9d50bb] to-[#6e48aa] flex items-center justify-between px-3">
         
           {/* 1. ส่วน Logo (EPL Predict) - อยู่ฝั่งซ้าย */}
@@ -66,35 +80,36 @@ export default async function Home() {
 
           {/* 2. ส่วนข้อมูล User - อยู่ฝั่งขวา */}
           <div className="flex items-center gap-3">
-            {/* ชื่อและคะแนน */}
-            <div className="flex flex-col items-end text-white drop-shadow-sm">
-              <span className="text-sm font-bold leading-none">
-                {user.name}
-              </span>
-              <span className="text-xs font-medium opacity-90">
-                Score: {user.score}
-              </span>
-            </div>
+            {user && ( // เพิ่มการเช็คว่ามี user หรือไม่
+              <>
+                <div className="flex flex-col items-end text-white drop-shadow-sm">
+                  <span className="text-sm font-bold leading-none">
+                    {user.name}
+                  </span>
+                  <span className="text-xs font-medium opacity-90">
+                    Score: {user.score}
+                  </span>
+                </div>
 
-            {/* รูป Profile (ขอบมนแบบในรูป Sketch) */}
-            <Link href={`/user/`+user.lineId} className="flex-shrink-0">
-              <div className="w-10 h-10 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20">
-                <img 
-                  src={user.image!} 
-                  className="w-full h-full object-cover" 
-                  alt="profile" 
-                />
-              </div>
-            </Link>
+                <Link href={`/user/${user.lineId}`} className="flex-shrink-0">
+                  <div className="w-10 h-10 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20">
+                    <img 
+                      src={user.image || '/default-avatar.png'} 
+                      className="w-full h-full object-cover" 
+                      alt="profile" 
+                    />
+                  </div>
+                </Link>
+              </>
+            )}
           </div>
 
         </div>
       ):(
-        <p></p>
+        <p>Preview</p>
       )}
       {/* ส่วนเนื้อหา 3 Tabs (ส่งข้อมูลไปจัดการต่อที่ Client) */}
-      <HomeClient userId={user.id} />
-    
+      {user && <HomeClient userId={user.id} />}    
     </div>
   )
 }
