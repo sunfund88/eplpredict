@@ -117,7 +117,8 @@ export default function PredictTab({ userId, nextGW, predictCache }: any) {
 
   useEffect(() => {
     const init = async () => {
-      await fetchData(nextGW) // โหลด GW ปัจจุบันก่อน
+      setCurrentGW(nextGW)
+      fetchData(nextGW, true)
       prefetchGWs(nextGW)     // แล้วค่อยแอบโหลด GW อื่นๆ ทิ้งไว้
     }
     init()
