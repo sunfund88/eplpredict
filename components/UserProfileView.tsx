@@ -69,7 +69,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
                     </div>
 
                     {/* สกอร์จริง */}
-                    <div className="flex items-center justify-center gap-1 px-3">
+                    <div className="flex text-white items-center justify-center gap-1 px-3">
                       <span className="text-lg font-black font-mono">
                         {pred.fixture?.homeScore ?? '-'}
                       </span>
