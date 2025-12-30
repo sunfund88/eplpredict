@@ -79,7 +79,7 @@ export default function HomeClient({ user }: { user: UserProfile }) {
         </div>
 
         {/* 2. ส่วนข้อมูล User - อยู่ฝั่งขวา */}
-        <div onClick={() => handleShowProfile(user.id)}>
+        <div onClick={() => handleShowProfile(user.lineId)}>
           <div className="flex items-center gap-3">
             {user && ( // เพิ่มการเช็คว่ามี user หรือไม่
               <>
