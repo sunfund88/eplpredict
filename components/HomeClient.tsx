@@ -39,9 +39,14 @@ export default function HomeClient({ user }: { user: UserProfile }) {
   // ฟังก์ชันเมื่อกดที่ชื่อ User (เช่น ในหน้า Scoreboard)
   const handleShowProfile = async (lineId: string) => {
     setIsProfileLoading(true)
-    const user = await getUserDetail(lineId)
-    setSelectedUser(user)
-    setIsProfileLoading(false)
+    try {
+      const user = await getUserDetail(lineId)
+      setSelectedUser(user)
+    } catch (err) {
+      console.error("Error loading profile:", err)
+    } finally {
+      setIsProfileLoading(false)
+    }
   }
 
   // หากมีการเลือก User ให้แสดง UserProfileView ทับทั้งหมด
@@ -99,57 +104,54 @@ export default function HomeClient({ user }: { user: UserProfile }) {
           </div>
         </div>
       </div>
-      
-      {!isProfileLoading ? (
-        <>
-          {/* Tab Navigation */}
-          <div className="flex bg-gray-200">
-            {Object.keys(tabConfigs).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-3 font-bold uppercase ${
-                  activeTab === tab ? tabConfigs[tab].color : 'text-gray-500'
-                }`}
-              >
-                {tabConfigs[tab].label}
-              </button>
-            ))}
-          </div>
-          {/* เนื้อหาที่เปลี่ยนไปตาม Tab พร้อมสีพื้นหลัง */}
-          <div className={`flex-1 ${tabConfigs[activeTab].color}`}>
 
-            {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
-            {activeTab === 'status_tab' && nextGW === 0 && (
-              <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
-            )}
-            {activeTab === 'status_tab' && nextGW !== 0 && (
-              <StatusTab nextGW={nextGW} onNavigate={() => setActiveTab('fixture_tab')} statusCache={statusCache} />
-            )}
-
-            {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
-            {activeTab === 'fixture_tab' && nextGW === 0 && (
-              <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
-            )}
-            {activeTab === 'fixture_tab' && nextGW !== 0 && (
-              <PredictTab 
-                userId={user.id} 
-                nextGW={nextGW}
-                predictCache={predictCache}
-              />
-            )}
-
-            {activeTab === 'scoreboard_tab' && (
-              <ScoreboardTab scoreboardCache={scoreboardCache} />
-            )}
-          </div>
-        </>
-      ):(
-        <div className="flex-1 flex items-center justify-center bg-[#38003c] text-white">
+      {isProfileLoading && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center text-white font-bold">
           Loading Profile...
         </div>
       )}
-      
+
+      {/* Tab Navigation */}
+      <div className="flex bg-gray-200">
+        {Object.keys(tabConfigs).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 py-3 font-bold uppercase ${
+              activeTab === tab ? tabConfigs[tab].color : 'text-gray-500'
+            }`}
+          >
+            {tabConfigs[tab].label}
+          </button>
+        ))}
+      </div>
+      {/* เนื้อหาที่เปลี่ยนไปตาม Tab พร้อมสีพื้นหลัง */}
+      <div className={`flex-1 ${tabConfigs[activeTab].color}`}>
+
+        {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
+        {activeTab === 'status_tab' && nextGW === 0 && (
+          <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
+        )}
+        {activeTab === 'status_tab' && nextGW !== 0 && (
+          <StatusTab nextGW={nextGW} onNavigate={() => setActiveTab('fixture_tab')} statusCache={statusCache} />
+        )}
+
+        {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
+        {activeTab === 'fixture_tab' && nextGW === 0 && (
+          <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
+        )}
+        {activeTab === 'fixture_tab' && nextGW !== 0 && (
+          <PredictTab 
+            userId={user.id} 
+            nextGW={nextGW}
+            predictCache={predictCache}
+          />
+        )}
+
+        {activeTab === 'scoreboard_tab' && (
+          <ScoreboardTab scoreboardCache={scoreboardCache} />
+        )}
+      </div>
     </div>
   )
 }
