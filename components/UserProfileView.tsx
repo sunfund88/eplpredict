@@ -47,7 +47,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
                     <span className="text-[10px] font-bold text-[#00ff85] uppercase tracking-widest">
                       Gameweek {pred.gw}
                     </span>
-                    {pred.fixture?.status === 'FINISHED' && (
+                    {pred.fixture?.finished === 'FINISHED' && (
                       <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full opacity-50">
                         Full Time
                       </span>
