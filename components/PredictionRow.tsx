@@ -41,6 +41,8 @@ export default function PredictionRow({ fixture, initialPrediction, userId, isPa
     try {
       await upsertPrediction(userId, fixture.id, fixture.gw, homeScore, awayScore)
       setIsSaved(true)
+      initialPrediction.predHome = homeScore
+      initialPrediction.predAway = awayScore
       alert("Data successfully saved!")
     } catch (error) {
       console.error(error)

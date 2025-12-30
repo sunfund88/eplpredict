@@ -1,28 +1,129 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getFixturesByGW, getUserPredictions, upsertPrediction, getGameweekInfo } from '@/app/actions/home'
 import PredictionRow from './PredictionRow' // Import row ที่สร้างใหม่
 import CountdownTimer from './CountdownTimer'
+
+interface PredictionData {
+  id: string;
+  userId: string;
+  fixtureId: number;
+  gw: number;
+  predHome: number;
+  predAway: number;
+  score: number;
+  multiplier: number;
+  createdAt: Date;
+}
 
 const checkIsExpired = (deadlineStr: string) => {
   return new Date().getTime() > new Date(deadlineStr).getTime()
 }
 
-export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:number }) {
-  const [currentGW, setCurrentGW] = useState<number>(nextGW)
+export default function PredictTab({ userId, nextGW, predictCache }: any) {
   const [fixtures, setFixtures] = useState<any[]>([])
   const [predictions, setPredictions] = useState<any[]>([])
+  const [currentGW, setCurrentGW] = useState<number>(0)
+
   const [loading, setLoading] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false); // เพิ่ม State สำหรับตอนส่งข้อมูล
-  const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number}>>({})
   const [deadline, setDeadline] = useState<string | null>(null)
   const [isPastDeadline, setIsPastDeadline] = useState(false)
-  // ฟังก์ชันสำหรับเก็บค่า score จากลูกๆ มาไว้ที่ตัวแม่
-  const updateLocalScore = (fixtureId: string, home: number, away: number) => {
-    setLocalScores(prev => ({
-      ...prev,
-      [fixtureId]: { home, away }
-    }))
+
+  const [isSubmitting, setIsSubmitting] = useState(false); // เพิ่ม State สำหรับตอนส่งข้อมูล
+  const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number}>>({})
+
+  // ฟังก์ชันดึงข้อมูลแบบฉลาด (Smart Fetch)
+  const fetchData = async (gw: number, useCache = true) => {
+    // 1. ตรวจสอบใน Cache ก่อน
+    if (useCache && predictCache.current[gw]) {
+      const cachedData = predictCache.current[gw]
+      setFixtures(cachedData.fixtures)
+      setPredictions(cachedData.predictions)
+      setDeadline(cachedData.deadline)
+      if (cachedData.deadline) {
+        setIsPastDeadline(new Date().getTime() > new Date(cachedData.deadline).getTime())
+      }
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
+    try {
+      // ดึงข้อมูลจาก API พร้อมกันเพื่อความเร็ว
+      const [data, gwInfo] = await Promise.all([
+        getFixturesByGW(gw),
+        getGameweekInfo(gw)
+      ])
+
+      let fList: any[] = [] 
+      let pList: PredictionData[] = [] // ระบุเป็น Array ของ PredictionData
+      let dl: string | null = null
+
+      if (data && data.fixtures) {
+        fList = data.fixtures
+        const fIds = fList.map((f: any) => f.id)
+        if (gw>=nextGW){
+          pList = await getUserPredictions(userId, fIds)
+        }
+      }
+
+      if (gwInfo) {
+        dl = gwInfo.gwDeadline.toISOString()
+      }
+
+      // 2. เก็บลง sharedCache ของตัวแม่
+      predictCache.current[gw] = { fixtures: fList, predictions: pList, deadline: dl }
+
+      // 3. อัปเดต State ที่ตัวแม่
+      setFixtures(fList)
+      setPredictions(pList)
+      setDeadline(dl)
+      if (dl) setIsPastDeadline(new Date().getTime() > new Date(dl).getTime())
+      
+    } catch (error) {
+      console.error("Fetch Error:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // --- ระบบ Prefetching (ดึงล่วงหน้า 3-5 GW) ---
+  const prefetchGWs = async (startGW: number) => {
+    const gwsToFetch = [startGW - 1, startGW - 2, startGW - 3, startGW - 4].filter(gw => gw >= 1)
+    
+    for (const gw of gwsToFetch) {
+      if (!predictCache.current[gw]) {
+        const data = await getFixturesByGW(gw)
+        if (data && data.fixtures) {
+          const fIds = data.fixtures.map((f: any) => f.id)
+          
+          // 2. ระบุ Type ให้กับ pList อย่างชัดเจนที่นี่
+          const pList: PredictionData[] = await getUserPredictions(userId, fIds)
+          
+          const gwInfo = await getGameweekInfo(gw)
+          predictCache.current[gw] = { 
+            fixtures: data.fixtures, 
+            predictions: pList, 
+            deadline: gwInfo?.gwDeadline.toISOString() || null 
+          }
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    const init = async () => {
+      setCurrentGW(nextGW)
+      fetchData(nextGW, true)
+      prefetchGWs(nextGW)     // แล้วค่อยแอบโหลด GW อื่นๆ ทิ้งไว้
+    }
+    init()
+  }, [])
+
+  const handleGWChange = async (newGW: number) => {
+    if (newGW < 1 || newGW > nextGW) return
+    setCurrentGW(newGW)
+    await fetchData(newGW, true)
   }
 
   const handlePredictAll = async () => {
@@ -40,7 +141,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       await Promise.all(promises);
       
       // เมื่อเสร็จแล้ว ให้โหลดข้อมูลใหม่จาก Server เพื่ออัปเดตสถานะปุ่มในแต่ละ Row
-      await fetchData(currentGW); 
+      await fetchData(currentGW, false); 
       setLocalScores({}); // ล้างค่าที่ค้างอยู่ใน local state
       alert("All data successfully saved!");
     } catch (error) {
@@ -51,41 +152,12 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
     }
   }
 
-  const fetchData = async (gw: number) => {
-    setLoading(true)
-
-    const data = await getFixturesByGW(gw)
-    if (data && data.fixtures) {
-      setFixtures(data.fixtures)
-      // ดึงข้อมูลการทายของผู้ใช้สำหรับ Fixtures เหล่านี้
-      const fIds = data.fixtures.map((f: any) => f.id)
-      const userPreds = await getUserPredictions(userId, fIds)
-      setPredictions(userPreds)
-    }
-    setLoading(false)
-    
-    const gwInfo = await getGameweekInfo(gw); 
-    if (gwInfo) {
-      const dl = gwInfo.gwDeadline.toISOString()
-      setDeadline(dl)
-
-      const isExpired = new Date().getTime() > new Date(dl).getTime()
-      setIsPastDeadline(isExpired)
-    }
-  }
-
-  useEffect(() => {
-    const init = async () => {
-      setCurrentGW(nextGW)
-      await fetchData(nextGW)
-    }
-    init()
-  }, [])
-
-  const handleGWChange = async (newGW: number) => {
-    if (newGW < 1 || newGW > nextGW) return
-    setCurrentGW(newGW)
-    await fetchData(newGW)
+  // ฟังก์ชันสำหรับเก็บค่า score จากลูกๆ มาไว้ที่ตัวแม่
+  const updateLocalScore = (fixtureId: string, home: number, away: number) => {
+    setLocalScores(prev => ({
+      ...prev,
+      [fixtureId]: { home, away }
+    }))
   }
 
   return (
@@ -122,12 +194,12 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
         {loading ? (
           <p className="text-center py-10 opacity-50">Loading ...</p>
         ) : (
-          fixtures.map((item) => (
+          fixtures.map((item: any) => (
             <PredictionRow 
               key={item.id} 
               fixture={item} 
               userId={userId}
-              initialPrediction={predictions.find(p => p.fixtureId === item.id)}
+              initialPrediction={predictions.find((p: any) => p.fixtureId === item.id)}
               isPast={isPastDeadline || currentGW < nextGW}
               testMode={false}// ส่งฟังก์ชันไปดึงค่า score
               onScoreChange={(home, away) => updateLocalScore(item.id, home, away)}

@@ -1,33 +1,33 @@
 // components/HomeClient.tsx
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getPredictActiveGW, isLiveGW, getFinishedGW, getCalculatedGW } from '@/app/actions/home'
 import StatusTab from './StatusTab'
 import PredictTab from './PredictTab'
 import ScoreboardTab from './ScoreboardTab'
 
 export default function HomeClient({ userId }: { userId: string }) {
-  const [activeTab, setActiveTab] = useState('status_tab')
+  const [activeTab, setActiveTab] = useState('fixture_tab')
   const [nextGW, setNextGW] = useState<number>(0)
-  const [finishedGW, setFinishedGW] = useState<number>(0)
-  const [calculatedGW, setCalculatedGW] = useState<number>(0)
-  const [isLive, setIsLive] = useState<boolean>(false)
+  
+  // ใช้ useRef เพื่อทำ Cache ข้ามการเปลี่ยน Tab
+  const predictCache = useRef<Record<number, { fixtures: any[], predictions: any[], deadline: string | null }>>({})
+  const scoreboardCache = useRef<any[] | null>(null)
+  const statusCache = useRef<any | null>(null)
 
   useEffect(() => {
     const init = async () => {
-      setNextGW(await getPredictActiveGW())
-      setFinishedGW(await getFinishedGW())
-      setCalculatedGW(await getCalculatedGW())
-      setIsLive(await isLiveGW())
+      const gw = await getPredictActiveGW()
+      setNextGW(gw)
     }
     init()
   }, [])
 
   // สีของพื้นหลังตามที่วาดไว้ในภาพร่าง
   const tabConfigs: any = {
-    status_tab: { color: 'bg-[#38003c]', label: 'Status' },
-    fixture_tab: { color: 'bg-[#38003c]', label: 'Fixture' },
-    leaderboard: { color: 'bg-[#38003c]', label: 'Scoreboard' }
+    status_tab: { color: 'bg-[#38003c] text-white', label: 'Status' },
+    fixture_tab: { color: 'bg-[#38003c] text-white', label: 'Fixture' },
+    scoreboard_tab: { color: 'bg-[#38003c] text-white', label: 'Scoreboard' }
   }
 
   return (
@@ -55,7 +55,7 @@ export default function HomeClient({ userId }: { userId: string }) {
           <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
         )}
         {activeTab === 'status_tab' && nextGW !== 0 && (
-          <StatusTab nextGW={nextGW} finishedGW={finishedGW} calculatedGW={calculatedGW} isLive={isLive} onNavigate={() => setActiveTab('fixture_tab')} />
+          <StatusTab nextGW={nextGW} onNavigate={() => setActiveTab('fixture_tab')} statusCache={statusCache} />
         )}
 
         {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
@@ -63,11 +63,15 @@ export default function HomeClient({ userId }: { userId: string }) {
           <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
         )}
         {activeTab === 'fixture_tab' && nextGW !== 0 && (
-          <PredictTab userId={userId} nextGW={nextGW}/>
+          <PredictTab 
+            userId={userId} 
+            nextGW={nextGW}
+            predictCache={predictCache}
+          />
         )}
 
-        {activeTab === 'leaderboard' && (
-          <ScoreboardTab/>
+        {activeTab === 'scoreboard_tab' && (
+          <ScoreboardTab scoreboardCache={scoreboardCache} />
         )}
       </div>
     </div>

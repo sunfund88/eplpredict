@@ -1,16 +1,55 @@
 // StatusTab.tsx
 'use client'
 import { useState, useEffect } from 'react'
+import { isLiveGW, getFinishedGW, getCalculatedGW } from '@/app/actions/home'
 
 interface StatusTabProps {
   nextGW: number;
-  finishedGW: number;
-  calculatedGW: number;
-  isLive: boolean;
   onNavigate: () => void;
+  statusCache: React.MutableRefObject<any | null>;
 }
 
-export default function StatusTab({ nextGW, finishedGW, calculatedGW, isLive, onNavigate }: StatusTabProps) {
+export default function StatusTab({ nextGW, onNavigate, statusCache }: StatusTabProps) {
+  const [finishedGW, setFinishedGW] = useState<number>(0)
+  const [calculatedGW, setCalculatedGW] = useState<number>(0)
+  const [isLive, setIsLive] = useState<boolean>(false)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const init = async () => {
+      // 1. ตรวจสอบใน Cache ก่อน
+      if (statusCache.current) {
+        const cached = statusCache.current
+        setFinishedGW(cached.finishedGW)
+        setCalculatedGW(cached.calculatedGW)
+        setIsLive(cached.isLive)
+        setLoading(false)
+        return
+      }
+
+      setLoading(true)
+      try {
+        const [f, c, l] = await Promise.all([
+          getFinishedGW(),
+          getCalculatedGW(),
+          isLiveGW()
+        ])
+        
+        // 2. บันทึกลง Cache ของตัวแม่
+        statusCache.current = { finishedGW: f, calculatedGW: c, isLive: l }
+        
+        setFinishedGW(f)
+        setCalculatedGW(c)
+        setIsLive(l)
+      } catch (error) {
+        console.error("Load Status Error:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    init()
+  }, [statusCache])
+
   return (
     <div className="flex flex-col gap-4 p-4 text-white min-h-screen">
       
