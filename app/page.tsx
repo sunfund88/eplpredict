@@ -51,12 +51,6 @@ export default async function Home() {
     user = {'id':'513d2c62-cbeb-4e1e-bb15-92deea7dbb83'}
   }  
 
-  // 3. ถ้า Login แล้ว ดึงข้อมูลสำหรับ 3 Tabs
-  // const [results, pending, leaderboard] = await Promise.all([
-  //   prisma.fixture.findMany({ where: { finished: true }, orderBy: { kickoff: 'desc' } }),
-  //   prisma.fixture.findMany({ where: { finished: false }, orderBy: { kickoff: 'asc' } }),
-  //   prisma.user.findMany({ orderBy: { score: 'desc' }, select: { name: true, image: true, score: true }, take: 50 })
-  // ])
 
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen flex flex-col">

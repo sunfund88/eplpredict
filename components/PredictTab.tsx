@@ -140,7 +140,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       await Promise.all(promises);
       
       // เมื่อเสร็จแล้ว ให้โหลดข้อมูลใหม่จาก Server เพื่ออัปเดตสถานะปุ่มในแต่ละ Row
-      await fetchData(currentGW); 
+      await fetchData(currentGW, false); 
       setLocalScores({}); // ล้างค่าที่ค้างอยู่ใน local state
       alert("All data successfully saved!");
     } catch (error) {
