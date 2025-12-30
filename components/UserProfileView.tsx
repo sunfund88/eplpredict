@@ -55,7 +55,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
                   </div>
 
                   {/* แถวกลาง: ผลการแข่งขันจริง (แทน Fixture IDเดิม) */}
-                  <div className="flex items-center justify-between bg-black/20 py-3 px-4 rounded-2xl">
+                  <div className="flex text-white items-center justify-between bg-black/20 py-3 px-4 rounded-2xl">
                     {/* ทีมเหย้า */}
                     <div className="flex items-center gap-2 flex-1">
                       <span className="text-xs font-bold uppercase tracking-tighter w-10 text-right">
@@ -69,7 +69,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
                     </div>
 
                     {/* สกอร์จริง */}
-                    <div className="flex text-white items-center justify-center gap-1 px-3">
+                    <div className="flex items-center justify-center gap-1 px-3">
                       <span className="text-lg font-black font-mono">
                         {pred.fixture?.homeScore ?? '-'}
                       </span>
@@ -93,7 +93,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
                   </div>
 
                   {/* แถวล่าง: ผลการทายและคะแนนที่ได้รับ */}
-                  <div className="flex items-center justify-between px-1">
+                  <div className="flex text-white items-center justify-between px-1">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] opacity-50 uppercase font-bold">Your Pred:</span>
                       <span className="text-sm font-black font-mono text-white bg-white/10 px-2 py-0.5 rounded-lg">
@@ -101,7 +101,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
                       </span>
                     </div>
                     
-                    <div className="flex items-center gap-1">
+                    <div className="flex text-white items-center gap-1">
                       <span className="text-[10px] opacity-50 uppercase font-bold">Pts:</span>
                       <span className={`text-lg font-black ${pred.score > 0 ? 'text-[#00ff85]' : 'text-white/30'}`}>
                         +{pred.score}
