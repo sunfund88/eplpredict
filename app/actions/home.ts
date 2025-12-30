@@ -123,7 +123,7 @@ export async function getGameweekInfo(gw: number) {
   });
 }
 
-export async function getLeaderboard() {
+export async function getScoreboard() {
   try {
     const users = await prisma.user.findMany({
       orderBy: {
@@ -131,6 +131,7 @@ export async function getLeaderboard() {
       },
       select: {
         id: true,
+        lineId: true,
         name: true,
         image: true,
         score: true
@@ -138,7 +139,7 @@ export async function getLeaderboard() {
     });
     return users;
   } catch (error) {
-    console.error("Error fetching leaderboard:", error);
+    console.error("Error fetching Scoreboard:", error);
     return [];
   }
 }

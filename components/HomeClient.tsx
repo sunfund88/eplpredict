@@ -27,6 +27,7 @@ export default function HomeClient({ user }: { user: UserProfile }) {
   const predictCache = useRef<Record<number, { fixtures: any[], predictions: any[], deadline: string | null }>>({})
   const scoreboardCache = useRef<any[] | null>(null)
   const statusCache = useRef<any | null>(null)
+  const profileCache = useRef<Record<string, any>>({})
 
   useEffect(() => {
     const init = async () => {
@@ -38,10 +39,18 @@ export default function HomeClient({ user }: { user: UserProfile }) {
 
   // ฟังก์ชันเมื่อกดที่ชื่อ User (เช่น ในหน้า Scoreboard)
   const handleShowProfile = async (lineId: string) => {
+    // เช็คใน Cache ก่อน
+    if (profileCache.current[lineId]) {
+      setSelectedUser(profileCache.current[lineId])
+      return
+    }
+
     setIsProfileLoading(true)
     try {
-      const user = await getUserDetail(lineId)
-      setSelectedUser(user)
+      const userData = await getUserDetail(lineId)
+      // บันทึกลง Cache
+      profileCache.current[lineId] = userData
+      setSelectedUser(userData)
     } catch (err) {
       console.error("Error loading profile:", err)
     } finally {
@@ -149,7 +158,7 @@ export default function HomeClient({ user }: { user: UserProfile }) {
         )}
 
         {activeTab === 'scoreboard_tab' && (
-          <ScoreboardTab scoreboardCache={scoreboardCache} />
+          <ScoreboardTab scoreboardCache={scoreboardCache} onUserClick={handleShowProfile}/>
         )}
       </div>
     </div>

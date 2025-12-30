@@ -1,9 +1,9 @@
 // components/ScoreboardTab.tsx
 'use client'
 import { useEffect, useState } from 'react'
-import { getLeaderboard } from '@/app/actions/home'
+import { getScoreboard } from '@/app/actions/home'
 
-export default function ScoreboardTab({ scoreboardCache }: { scoreboardCache: React.MutableRefObject<any[] | null> }) {
+export default function ScoreboardTab({ scoreboardCache, onUserClick }: any) {
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -18,14 +18,14 @@ export default function ScoreboardTab({ scoreboardCache }: { scoreboardCache: Re
 
       setLoading(true)
       try {
-        const data = await getLeaderboard()
+        const data = await getScoreboard()
         
         // 2. บันทึกลงใน Cache ของตัวแม่
         scoreboardCache.current = data
         
         setUsers(data)
       } catch (error) {
-        console.error("Leaderboard Load Error:", error)
+        console.error("Scoreboard Load Error:", error)
       } finally {
         setLoading(false)
       }
@@ -56,6 +56,7 @@ export default function ScoreboardTab({ scoreboardCache }: { scoreboardCache: Re
             {users.map((user, index) => (
               <tr 
                 key={user.id} 
+                onClick={() => onUserClick(user.lineId)}
                 className={`border-b border-white/5 transition-colors hover:bg-white/10 ${
                   index === 0 ? 'bg-lime-400/10' : '' // ไฮไลท์อันดับ 1
                 }`}
