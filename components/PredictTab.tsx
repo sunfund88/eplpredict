@@ -68,7 +68,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
     if (gwInfo) {
       const dl = gwInfo.gwDeadline.toISOString()
       setDeadline(dl)
-
+      // เช็คทันทีว่าหมดเวลาหรือยัง
       const isExpired = new Date().getTime() > new Date(dl).getTime()
       setIsPastDeadline(isExpired)
     }
