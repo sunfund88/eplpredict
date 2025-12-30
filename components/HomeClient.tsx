@@ -10,9 +10,9 @@ export default function HomeClient({ userId }: { userId: string }) {
   const [activeTab, setActiveTab] = useState('fixture_tab')
   const [nextGW, setNextGW] = useState<number>(0)
   
-  
   // ใช้ useRef เพื่อทำ Cache ข้ามการเปลี่ยน Tab
   const predictCache = useRef<Record<number, { fixtures: any[], predictions: any[], deadline: string | null }>>({})
+  const scoreboardCache = useRef<any[] | null>(null)
 
   useEffect(() => {
     const init = async () => {
@@ -26,7 +26,7 @@ export default function HomeClient({ userId }: { userId: string }) {
   const tabConfigs: any = {
     status_tab: { color: 'bg-[#38003c] text-white', label: 'Status' },
     fixture_tab: { color: 'bg-[#38003c] text-white', label: 'Fixture' },
-    leaderboard: { color: 'bg-[#38003c] text-white', label: 'Scoreboard' }
+    scoreboard_tab: { color: 'bg-[#38003c] text-white', label: 'Scoreboard' }
   }
 
   return (
@@ -69,8 +69,8 @@ export default function HomeClient({ userId }: { userId: string }) {
           />
         )}
 
-        {activeTab === 'leaderboard' && (
-          <ScoreboardTab/>
+        {activeTab === 'scoreboard_tab' && (
+          <ScoreboardTab scoreboardCache={scoreboardCache} />
         )}
       </div>
     </div>

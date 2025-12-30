@@ -32,10 +32,6 @@ export default function PredictTab({ userId, nextGW, predictCache }: any) {
   const [isSubmitting, setIsSubmitting] = useState(false); // เพิ่ม State สำหรับตอนส่งข้อมูล
   const [localScores, setLocalScores] = useState<Record<string, { home: number, away: number}>>({})
 
-  // --- ระบบ Caching ---
-  // ใช้ useRef เพื่อเก็บข้อมูลโดยไม่ทำให้ Component re-render โดยไม่จำเป็น
-  // const cache = useRef<Record<number, { fixtures: any[], predictions: PredictionData[], deadline: string | null }>>({})
-
   // ฟังก์ชันดึงข้อมูลแบบฉลาด (Smart Fetch)
   const fetchData = async (gw: number, useCache = true) => {
     // 1. ตรวจสอบใน Cache ก่อน
@@ -163,15 +159,6 @@ export default function PredictTab({ userId, nextGW, predictCache }: any) {
       [fixtureId]: { home, away }
     }))
   }
-
-  // useEffect(() => {
-  //   const init = async () => {
-  //     setCurrentGW(nextGW)
-  //     await fetchData(nextGW)
-  //   }
-  //   init()
-  // }, [])
-
 
   return (
     <div className="relative flex flex-col bg-[#38003c] min-h-screen text-white p-4 pb-24">      

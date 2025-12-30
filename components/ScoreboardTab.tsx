@@ -3,18 +3,35 @@
 import { useEffect, useState } from 'react'
 import { getLeaderboard } from '@/app/actions/home'
 
-export default function ScoreboardTab() {
+export default function ScoreboardTab({ scoreboardCache }: { scoreboardCache: React.MutableRefObject<any[] | null> }) {
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const loadData = async () => {
-      const data = await getLeaderboard();
-      setUsers(data);
-      setLoading(false);
-    };
-    loadData();
-  }, []);
+      // 1. ตรวจสอบใน Cache ก่อน
+      if (scoreboardCache.current) {
+        setUsers(scoreboardCache.current)
+        setLoading(false)
+        return
+      }
+
+      setLoading(true)
+      try {
+        const data = await getLeaderboard()
+        
+        // 2. บันทึกลงใน Cache ของตัวแม่
+        scoreboardCache.current = data
+        
+        setUsers(data)
+      } catch (error) {
+        console.error("Leaderboard Load Error:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [scoreboardCache]);
 
   if (loading) {
     return <div className="text-center py-20 text-white/50">Loading Rankings...</div>;
