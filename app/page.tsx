@@ -48,9 +48,8 @@ export default async function Home() {
     }
   }
   else{
-    user = {'id':'333333333333333333333333'}
-  }
-  
+    user = {'id':'513d2c62-cbeb-4e1e-bb15-92deea7dbb83'}
+  }  
 
   // 3. ถ้า Login แล้ว ดึงข้อมูลสำหรับ 3 Tabs
   // const [results, pending, leaderboard] = await Promise.all([

@@ -60,7 +60,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
       let fList: any[] = [] 
       let pList: PredictionData[] = [] // ระบุเป็น Array ของ PredictionData
       let dl: string | null = null
-      
+
       if (data && data.fixtures) {
         fList = data.fixtures
         const fIds = fList.map((f: any) => f.id)
@@ -122,7 +122,7 @@ export default function PredictTab({ userId, nextGW }: { userId: string, nextGW:
   const handleGWChange = async (newGW: number) => {
     if (newGW < 1 || newGW > nextGW) return
     setCurrentGW(newGW)
-    await fetchData(newGW)
+    await fetchData(newGW, true)
   }
 
   const handlePredictAll = async () => {
