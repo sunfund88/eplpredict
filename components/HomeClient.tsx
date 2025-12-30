@@ -23,8 +23,6 @@ export default function HomeClient({ user }: { user: UserProfile }) {
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [isProfileLoading, setIsProfileLoading] = useState(false)
 
-  const currentEnv = process.env.VERCEL_ENV;  
-
   // ใช้ useRef เพื่อทำ Cache ข้ามการเปลี่ยน Tab
   const predictCache = useRef<Record<number, { fixtures: any[], predictions: any[], deadline: string | null }>>({})
   const scoreboardCache = useRef<any[] | null>(null)
@@ -89,67 +87,69 @@ export default function HomeClient({ user }: { user: UserProfile }) {
                   </span>
                 </div>
 
-                <Link href={`/user/${user.lineId}`} className="flex-shrink-0">
-                  <div className="w-10 h-10 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20">
-                    <img 
-                      src={user.image || '/default-avatar.png'} 
-                      className="w-full h-full object-cover" 
-                      alt="profile" 
-                    />
-                  </div>
-                </Link>
+                <div className="w-10 h-10 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20">
+                  <img 
+                    src={user.image || '/default-avatar.png'} 
+                    className="w-full h-full object-cover" 
+                    alt="profile" 
+                  />
+                </div>
               </>
             )}
           </div>
         </div>
       </div>
-      {/* Tab Navigation */}
+      
       {!isProfileLoading ? (
-        <div className="flex bg-gray-200">
-          {Object.keys(tabConfigs).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-3 font-bold uppercase ${
-                activeTab === tab ? tabConfigs[tab].color : 'text-gray-500'
-              }`}
-            >
-              {tabConfigs[tab].label}
-            </button>
-          ))}
-        </div>
+        <>
+          {/* Tab Navigation */}
+          <div className="flex bg-gray-200">
+            {Object.keys(tabConfigs).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-3 font-bold uppercase ${
+                  activeTab === tab ? tabConfigs[tab].color : 'text-gray-500'
+                }`}
+              >
+                {tabConfigs[tab].label}
+              </button>
+            ))}
+          </div>
+          {/* เนื้อหาที่เปลี่ยนไปตาม Tab พร้อมสีพื้นหลัง */}
+          <div className={`flex-1 ${tabConfigs[activeTab].color}`}>
+
+            {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
+            {activeTab === 'status_tab' && nextGW === 0 && (
+              <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
+            )}
+            {activeTab === 'status_tab' && nextGW !== 0 && (
+              <StatusTab nextGW={nextGW} onNavigate={() => setActiveTab('fixture_tab')} statusCache={statusCache} />
+            )}
+
+            {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
+            {activeTab === 'fixture_tab' && nextGW === 0 && (
+              <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
+            )}
+            {activeTab === 'fixture_tab' && nextGW !== 0 && (
+              <PredictTab 
+                userId={user.id} 
+                nextGW={nextGW}
+                predictCache={predictCache}
+              />
+            )}
+
+            {activeTab === 'scoreboard_tab' && (
+              <ScoreboardTab scoreboardCache={scoreboardCache} />
+            )}
+          </div>
+        </>
       ):(
         <div className="flex-1 flex items-center justify-center bg-[#38003c] text-white">
           Loading Profile...
         </div>
       )}
-      {/* เนื้อหาที่เปลี่ยนไปตาม Tab พร้อมสีพื้นหลัง */}
-      <div className={`flex-1 ${tabConfigs[activeTab].color}`}>
-
-        {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
-        {activeTab === 'status_tab' && nextGW === 0 && (
-          <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
-        )}
-        {activeTab === 'status_tab' && nextGW !== 0 && (
-          <StatusTab nextGW={nextGW} onNavigate={() => setActiveTab('fixture_tab')} statusCache={statusCache} />
-        )}
-
-        {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
-        {activeTab === 'fixture_tab' && nextGW === 0 && (
-          <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
-        )}
-        {activeTab === 'fixture_tab' && nextGW !== 0 && (
-          <PredictTab 
-            userId={user.id} 
-            nextGW={nextGW}
-            predictCache={predictCache}
-          />
-        )}
-
-        {activeTab === 'scoreboard_tab' && (
-          <ScoreboardTab scoreboardCache={scoreboardCache} />
-        )}
-      </div>
+      
     </div>
   )
 }
