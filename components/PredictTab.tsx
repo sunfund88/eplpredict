@@ -37,7 +37,7 @@ export default function PredictTab({
 
   // --- ระบบ Caching ---
   // ใช้ useRef เพื่อเก็บข้อมูลโดยไม่ทำให้ Component re-render โดยไม่จำเป็น
-  const cache = useRef<Record<number, { fixtures: any[], predictions: PredictionData[], deadline: string | null }>>({})
+  // const cache = useRef<Record<number, { fixtures: any[], predictions: PredictionData[], deadline: string | null }>>({})
 
   // ฟังก์ชันดึงข้อมูลแบบฉลาด (Smart Fetch)
   const fetchData = async (gw: number, useCache = true) => {
@@ -77,7 +77,7 @@ export default function PredictTab({
       }
 
       // 2. เก็บลง sharedCache ของตัวแม่
-      sharedCache.current[gw] = { fixtures: fList, predictions: pList, deadline: dl }
+      sharedCache[gw] = { fixtures: fList, predictions: pList, deadline: dl }
 
       // 3. อัปเดต State ที่ตัวแม่
       setSharedFixtures(fList)
@@ -97,7 +97,7 @@ export default function PredictTab({
     const gwsToFetch = [startGW - 1, startGW - 2, startGW - 3, startGW - 4].filter(gw => gw >= 1)
     
     for (const gw of gwsToFetch) {
-      if (!cache.current[gw]) {
+      if (!sharedCache[gw]) {
         const data = await getFixturesByGW(gw)
         if (data && data.fixtures) {
           const fIds = data.fixtures.map((f: any) => f.id)
@@ -106,7 +106,7 @@ export default function PredictTab({
           const pList: PredictionData[] = await getUserPredictions(userId, fIds)
           
           const gwInfo = await getGameweekInfo(gw)
-          cache.current[gw] = { 
+          sharedCache[gw] = { 
             fixtures: data.fixtures, 
             predictions: pList, 
             deadline: gwInfo?.gwDeadline.toISOString() || null 
