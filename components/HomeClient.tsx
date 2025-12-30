@@ -13,6 +13,7 @@ export default function HomeClient({ userId }: { userId: string }) {
   // ใช้ useRef เพื่อทำ Cache ข้ามการเปลี่ยน Tab
   const predictCache = useRef<Record<number, { fixtures: any[], predictions: any[], deadline: string | null }>>({})
   const scoreboardCache = useRef<any[] | null>(null)
+  const statusCache = useRef<any | null>(null)
 
   useEffect(() => {
     const init = async () => {
@@ -54,7 +55,7 @@ export default function HomeClient({ userId }: { userId: string }) {
           <div className="text-center py-10 text-white font-bold">Initializing Gameweek...</div>
         )}
         {activeTab === 'status_tab' && nextGW !== 0 && (
-          <StatusTab nextGW={nextGW} onNavigate={() => setActiveTab('fixture_tab')} />
+          <StatusTab nextGW={nextGW} onNavigate={() => setActiveTab('fixture_tab')} statusCache={statusCache} />
         )}
 
         {/* ระหว่างรอโหลดค่า GW อาจจะใส่ Loading เล็กน้อย */}
