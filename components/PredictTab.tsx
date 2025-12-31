@@ -161,7 +161,7 @@ export default function PredictTab({ userId, nextGW, predictCache }: any) {
   }
 
   return (
-    <div className="relative flex flex-col bg-[#38003c] min-h-screen text-white p-4 pb-24">      
+    <div className="relative flex flex-col bg-[#38003c] min-h-screen text-white p-4 pb-6">      
       {/* --- Full Screen Loading Animation --- */}
       {isSubmitting && (
         <div className="fixed inset-0 z-[99] flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm">

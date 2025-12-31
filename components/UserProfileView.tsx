@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react"
 import { getTeamLogo, getTeamShortName } from '@/lib/teams'
 
 export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
-  const ITEMS_PER_PAGE = 5
+  const ITEMS_PER_PAGE = 3
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE)
   const allPredictions = user.predictions || []
   const currentItems = allPredictions.slice(0, visibleItems)
@@ -26,7 +26,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
 
       {/* Profile Header & Info (ยกจากหน้าเดิมมาเลย) */}
       <div className="bg-gradient-to-b from-[#00ff85] to-[#38003c] h-32"></div>
-      <div className="px-4 -mt-16">
+      <div className="px-4 -mt-16 mb-6">
         <div className="flex flex-col items-center">
           <div className="w-32 h-32 rounded-2xl border-3 border-white/40 overflow-hidden bg-slate-800 shadow-2xl">
             <img src={user.image || "/default-avatar.png"} className="w-full h-full object-cover" />
@@ -44,11 +44,11 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
 
         {/* Prediction History... */}
         <div className="mt-8">
-          <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
-            <h3 className="text-white/50 text-xs font-bold uppercase mb-4">
+          <div className="flex justify-between items-center border-white/10">
+            <h3 className="text-white/50 font-bold uppercase">
             Prediction History
             </h3>
-            <span className="text-[10px] text-white/30">
+            <span className="text-xs text-white/30">
               Showing {currentItems.length} of {allPredictions.length}
             </span>
           </div>
