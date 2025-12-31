@@ -1,9 +1,19 @@
 // components/UserProfileView.tsx
 'use client'
+import { useState } from "react" 
 import { ArrowLeft } from "lucide-react"
 import { getTeamLogo, getTeamShortName } from '@/lib/teams'
 
 export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
+  const ITEMS_PER_PAGE = 5
+  const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE)
+  const allPredictions = user.predictions || []
+  const currentItems = allPredictions.slice(0, visibleItems)
+
+  const handleLoadMore = () => {
+    setVisibleItems((prev) => prev + ITEMS_PER_PAGE)
+  }
+
   return (
     <div className="flex flex-col bg-[#38003c] min-h-screen relative">
       {/* ปุ่มย้อนกลับ เพื่อปิดหน้าโปรไฟล์ */}
@@ -34,10 +44,19 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
 
         {/* Prediction History... */}
         <div className="mt-8">
-           <h3 className="text-white/50 text-xs font-bold uppercase mb-4">Prediction History</h3>
-           <div className="grid gap-1">
-            {user.predictions && user.predictions.length > 0 ? (
-              user.predictions.map((pred: any) => (
+          <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+            <h3 className="text-white/50 text-xs font-bold uppercase mb-4">
+            Prediction History
+            </h3>
+            <span className="text-[10px] text-white/30">
+              Showing {currentItems.length} of {allPredictions.length}
+            </span>
+          </div>
+        
+          <div className="grid gap-1">
+
+            {currentItems.length > 0 ? (
+              currentItems.map((pred: any) => (
                 <div 
                   key={pred.id} 
                   className="pred-history-card"
@@ -121,6 +140,14 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
               <div className="text-center py-20 opacity-30 italic text-sm">
                 No history available.
               </div>
+            )}
+            {visibleItems < allPredictions.length && (
+              <button 
+                onClick={handleLoadMore}
+                className="mt-4 w-full py-3 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all border border-white/5"
+              >
+                SHOW MORE (+5)
+              </button>
             )}
           </div>
         </div>
