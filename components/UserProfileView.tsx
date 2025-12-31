@@ -6,7 +6,7 @@ import { getTeamLogo, getTeamShortName } from '@/lib/teams'
 
 export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
   // 1. กำหนดค่าพื้นฐานสำหรับ Pagination
-  const ITEMS_PER_PAGE = 5
+  const ITEMS_PER_PAGE = 10
   const [currentPage, setCurrentPage] = useState(1)
 
   const allPredictions = user.predictions || []
