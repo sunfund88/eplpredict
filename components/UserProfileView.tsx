@@ -16,26 +16,26 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
 
       {/* Profile Header & Info (ยกจากหน้าเดิมมาเลย) */}
       <div className="bg-gradient-to-b from-[#00ff85] to-[#38003c] h-32"></div>
-      <div className="px-6 -mt-16">
+      <div className="px-4 -mt-16">
         <div className="flex flex-col items-center">
-          <div className="w-32 h-32 rounded-full border-8 border-[#38003c] overflow-hidden bg-slate-800 shadow-2xl">
+          <div className="w-32 h-32 rounded-2xl border-3 border-white/40 overflow-hidden bg-slate-800 shadow-2xl">
             <img src={user.image || "/default-avatar.png"} className="w-full h-full object-cover" />
           </div>
-          <h1 className="mt-4 text-3xl font-black text-white italic uppercase">{user.name}</h1>
+          <h1 className="text-3xl font-bold text-white">{user.name}</h1>
+
+          <div className="px-4 text-amber-400 font-bold text-lg">
+            {user.score.toLocaleString()} POINTS
+          </div>
           
           {isOwnProfile && (
-             <a href="/logout" className="mt-2 px-6 py-1 bg-red-600 text-white text-[10px] font-bold rounded-full">LOGOUT</a>
+             <a href="/logout" className="mt-4 px-10 py-1 bg-red-800 text-white text-lg font-bold rounded-md">LOGOUT</a>
           )}
-
-          <div className="mt-3 px-4 py-1 bg-[#00ff85] text-[#38003c] rounded-full font-bold text-sm">
-            {user.score.toLocaleString()} TOTAL POINTS
-          </div>
         </div>
 
         {/* Prediction History... */}
         <div className="mt-8">
            <h3 className="text-white/50 text-xs font-bold uppercase mb-4">Prediction History</h3>
-           <div className="grid gap-2">
+           <div className="grid gap-1">
             {user.predictions && user.predictions.length > 0 ? (
               user.predictions.map((pred: any) => (
                 <div 
