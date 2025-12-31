@@ -47,7 +47,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
                     <span className="header-gw">
                       Gameweek {pred.gw}
                     </span>
-                    {pred.fixture?.finished === 'FINISHED' && (
+                    {pred.finished === 'FINISHED' && (
                       <span className="header-finished">
                         Full Time
                       </span>
