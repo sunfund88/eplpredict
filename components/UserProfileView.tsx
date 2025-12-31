@@ -35,7 +35,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
         {/* Prediction History... */}
         <div className="mt-8">
            <h3 className="text-white/50 text-xs font-bold uppercase mb-4">Prediction History</h3>
-           <div className="grid gap-4">
+           <div className="grid gap-2">
             {user.predictions && user.predictions.length > 0 ? (
               user.predictions.map((pred: any) => (
                 <div 

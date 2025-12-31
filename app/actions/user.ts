@@ -10,12 +10,13 @@ export async function getUserDetail(lineId: string) {
       },
       include: {
         predictions: {
-          orderBy: {
-            gw: 'desc'
-          },
           include: {
             fixture: true 
-          }
+          },
+          orderBy: [
+            { gw: 'desc' },
+            { fixture: { kickoff: 'desc' } }
+          ]
         }
       }
     });
