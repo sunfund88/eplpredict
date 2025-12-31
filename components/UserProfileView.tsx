@@ -154,7 +154,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
 
             {/* 4. ส่วนควบคุม Pagination (เลขหน้า 1, 2, 3) */}
             {totalPages > 1 && (
-              <div className="mt-8 flex flex-wrap justify-center items-center gap-2">
+              <div className="mt-2 flex flex-wrap justify-center items-center gap-2">
                 {/* ปุ่มย้อนกลับ */}
                 <button
                   onClick={() => goToPage(Math.max(1, currentPage - 1))}
@@ -183,7 +183,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
                       onClick={() => goToPage(pageNum)}
                       className={`w-10 h-10 rounded-lg font-black text-sm transition-all ${
                         currentPage === pageNum
-                          ? 'bg-[#00ff85] text-[#38003c] scale-110 shadow-[0_0_15px_rgba(0,255,133,0.4)]'
+                          ? 'bg-[#00ff85] text-[#38003c] shadow-[0_0_15px_rgba(0,255,133,0.4)]'
                           : 'bg-white/5 text-white hover:bg-white/10'
                       }`}
                     >
