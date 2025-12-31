@@ -1,17 +1,27 @@
 // components/UserProfileView.tsx
 'use client'
 import { useState } from "react" 
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react" 
 import { getTeamLogo, getTeamShortName } from '@/lib/teams'
 
 export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
-  const ITEMS_PER_PAGE = 3
-  const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE)
-  const allPredictions = user.predictions || []
-  const currentItems = allPredictions.slice(0, visibleItems)
+  // 1. กำหนดค่าพื้นฐานสำหรับ Pagination
+  const ITEMS_PER_PAGE = 5
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const handleLoadMore = () => {
-    setVisibleItems((prev) => prev + ITEMS_PER_PAGE)
+  const allPredictions = user.predictions || []
+  const totalPages = Math.ceil(allPredictions.length / ITEMS_PER_PAGE)
+
+  // 2. คำนวณช่วงของข้อมูลที่จะแสดงในหน้านั้นๆ
+  const indexOfLastItem = currentPage * ITEMS_PER_PAGE
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE
+  const currentItems = allPredictions.slice(indexOfFirstItem, indexOfLastItem)
+
+  // 3. ฟังก์ชันเปลี่ยนหน้า
+  const goToPage = (pageNumber: number) => {
+    setCurrentPage(pageNumber)
+    // เลื่อนหน้าจอกลับขึ้นไปด้านบนของส่วนประวัติ (Optional)
+    window.scrollTo({ top: 200, behavior: 'smooth' })
   }
 
   return (
@@ -49,7 +59,7 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
             Prediction History
             </h3>
             <span className="text-xs text-white/30">
-              Showing {currentItems.length} of {allPredictions.length}
+              Page {currentPage} of {totalPages || 1}
             </span>
           </div>
         
@@ -141,13 +151,56 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
                 No history available.
               </div>
             )}
-            {visibleItems < allPredictions.length && (
-              <button 
-                onClick={handleLoadMore}
-                className="mt-4 w-full py-3 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all border border-white/5"
-              >
-                SHOW MORE (+5)
-              </button>
+
+            {/* 4. ส่วนควบคุม Pagination (เลขหน้า 1, 2, 3) */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex flex-wrap justify-center items-center gap-2">
+                {/* ปุ่มย้อนกลับ */}
+                <button
+                  onClick={() => goToPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg bg-white/5 text-white disabled:opacity-20 transition-colors"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+
+                {/* ปุ่มเลขหน้า */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+                  // แสดงเฉพาะหน้าใกล้เคียงถ้าจำนวนหน้าเยอะเกินไป (Logic พื้นฐาน)
+                  if (
+                      totalPages > 5 && 
+                      pageNum !== 1 && 
+                      pageNum !== totalPages && 
+                      Math.abs(pageNum - currentPage) > 1
+                  ) {
+                      if (Math.abs(pageNum - currentPage) === 2) return <span key={pageNum} className="text-white/20">...</span>
+                      return null
+                  }
+
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => goToPage(pageNum)}
+                      className={`w-10 h-10 rounded-lg font-black text-sm transition-all ${
+                        currentPage === pageNum
+                          ? 'bg-[#00ff85] text-[#38003c] scale-110 shadow-[0_0_15px_rgba(0,255,133,0.4)]'
+                          : 'bg-white/5 text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  )
+                })}
+
+                {/* ปุ่มไปข้างหน้า */}
+                <button
+                  onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-lg bg-white/5 text-white disabled:opacity-20 transition-colors"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
             )}
           </div>
         </div>
