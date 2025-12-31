@@ -24,7 +24,7 @@
   }
 
   .pred-history-card .header-gw {
-    @apply text-xs font-bold text-[#00ff85] uppercase tracking-widest
+    @apply text-xs font-bold text-white uppercase tracking-widest
   }
 
   .pred-history-card .header-pending {
@@ -32,7 +32,7 @@
   }
 
   .pred-history-card .header-finished {
-    @apply text-sm bg-green-400 px-2 py-0.5 rounded-sm text-black uppercase
+    @apply text-sm bg-gray-500 px-2 py-0.5 rounded-sm text-black uppercase
   }
 
   .pred-history-card .body {
