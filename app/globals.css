@@ -1,50 +1,51 @@
-@import "tailwindcss";@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer components {
-  .fixture-card {
-    @apply flex flex-col items-center justify-between w-full rounded-md border border-white/10 p-2 mb-2;
-  }
-  .fixture-home{
-    @apply flex-1 flex flex-col items-end gap-1
-  }
-  .fixture-away{
-    @apply flex-1 flex flex-col items-start gap-1
-  }
-  .fixture-button-group{
-    @apply flex justify-center gap-2 mt-3
+@utility fixture-card {
+  @apply flex flex-col items-center justify-between w-full rounded-md border border-white/10 p-2 mb-2;
+
+  & .fixture-home {
+    @apply flex-1 flex flex-col items-end gap-1;
   }
 
-  .pred-history-card {
-    @apply bg-white/5 border border-white/10 p-3 rounded-lg flex flex-col gap-3 hover:bg-white/10 transition-all
+  & .fixture-away {
+    @apply flex-1 flex flex-col items-start gap-1;
   }
 
-  .pred-history-card .header {
-    @apply flex justify-between items-center px-1
+  & .fixture-button-group {
+    @apply flex justify-center gap-2 mt-3;
+  }
+}
+
+@utility pred-history-card {
+  @apply bg-white/5 border border-white/10 p-3 rounded-lg flex flex-col gap-3 hover:bg-white/10 transition-all;
+
+  /* การจัดการคลาสลูก (Nested) ใน v4 สามารถเขียนต่อข้างในได้เลย */
+  & .header {
+    @apply flex justify-between items-center px-1;
   }
 
-  .pred-history-card .header-gw {
-    @apply text-xs font-bold text-white uppercase tracking-widest
+  & .header-gw {
+    @apply text-xs font-bold text-white uppercase tracking-widest;
   }
 
-  .pred-history-card .header-pending {
-    @apply text-sm bg-white/10 px-2 py-0.5 rounded-sm opacity-50 text-white uppercase
+  & .header-pending {
+    @apply text-sm bg-white/10 px-2 py-0.5 rounded-sm opacity-50 text-white uppercase;
   }
 
-  .pred-history-card .header-finished {
-    @apply text-sm bg-gray-500 px-2 py-0.5 rounded-sm text-black uppercase
+  & .header-finished {
+    @apply text-sm bg-gray-500 px-2 py-0.5 rounded-sm text-black uppercase;
   }
 
-  .pred-history-card .body {
-    @apply flex text-white items-center bg-black/20 py-2 px-4 rounded-lg
+  & .body {
+    @apply flex text-white items-center bg-black/20 py-2 px-4 rounded-lg;
+
+    & .body-team {
+      @apply flex-1 flex flex-col;
+    }
   }
 
-  .pred-history-card .body .body-team {
-    @apply flex-1 flex flex-col
-  }
-
-  .pred-history-card .footer {
-    @apply flex  text-white items-center justify-between px-1
+  & .footer {
+    @apply flex text-white items-center justify-between px-1;
   }
 }
 
