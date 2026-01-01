@@ -33,9 +33,9 @@ export default function UserProfileView({ user, isOwnProfile, onBack }: any) {
       >
         <ArrowLeft className="text-white w-6 h-6" />
       </button>
-
+      
       {/* Profile Header & Info (ยกจากหน้าเดิมมาเลย) */}
-      <div className="bg-gradient-to-b from-[#00ff85] to-[#38003c] h-32"></div>
+      <div className="bg-linear-to-b from-[#00ff85] to-[#38003c] h-32"></div>
       <div className="px-4 -mt-16 mb-6">
         <div className="flex flex-col items-center">
           <div className="w-32 h-32 rounded-2xl border-3 border-white/40 overflow-hidden bg-slate-800 shadow-2xl">
