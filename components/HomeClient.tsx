@@ -79,7 +79,7 @@ export default function HomeClient({ user }: { user: UserProfile }) {
   return (
     <div className="flex flex-col flex-1">
       {/* Header */}
-      <div className="relative w-full h-[60px] overflow-hidden shadow-md bg-gradient-to-r from-[#f06272] via-[#9d50bb] to-[#6e48aa] flex items-center justify-between px-3">
+      <div className="relative w-full h-15 overflow-hidden shadow-md bg-linear-to-r from-[#f06272] via-[#9d50bb] to-[#6e48aa] flex items-center justify-between px-3">
         {/* 1. ส่วน Logo (EPL Predict) - อยู่ฝั่งซ้าย */}
         <div className="flex flex-col justify-center select-none">
           <h1 className="text-3xl font-black leading-none text-black tracking-tighter">
@@ -115,7 +115,7 @@ export default function HomeClient({ user }: { user: UserProfile }) {
       </div>
 
       {isProfileLoading && (
-        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center text-white font-bold">
+        <div className="fixed inset-0 bg-black/60 z-100 flex items-center justify-center text-white font-bold">
           Loading Profile...
         </div>
       )}
